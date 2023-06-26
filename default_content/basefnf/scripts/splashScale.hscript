@@ -1,0 +1,6 @@
+// not needed for un-tgt'd troll engine
+// but just incase you're using in tgt:
+function postSetupNoteSplash(x, y, note, texture, hueColor, satColor, brtColor){
+    this.scale.set(1, 1);
+    this.updateHitbox();
+}
