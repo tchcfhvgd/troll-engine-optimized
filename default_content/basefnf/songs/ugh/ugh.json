@@ -3,7 +3,7 @@
 		"extraTracks": [],
 		"player1": "bf",
 		"events": [],
-		"gfVersion": "gf",
+		"gfVersion": "gf-tankmen",
 		"notes": [
 			{
 				"sectionNotes": [
@@ -3025,7 +3025,7 @@
 		],
 		"player2": "tankman",
 		"song": "Ugh",
-		"stage": "stage",
+		"stage": "tank",
 		"needsVoices": true,
 		"validScore": true,
 		"bpm": 160,
