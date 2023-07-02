@@ -32,7 +32,6 @@ class AdvancedHUD extends BaseHUD
 	var songHighscore:Int = 0;
 	public var hudPosition(default, null):String = ClientPrefs.hudPosition;
 
-	var npsIdx:Int = 0;
 	override public function new(iP1:String, iP2:String, songName:String)
 	{
 		super(iP1, iP2, songName);
@@ -45,9 +44,10 @@ class AdvancedHUD extends BaseHUD
 		displayedJudges.push("cb");
 		
 		songHighscore = Highscore.getScore(songName);
-		var tWidth = 200;
+		var tWidth = 210;
+
 		scoreTxt = new FlxText(0, 0, tWidth, "", 20);
-		scoreTxt.setFormat(Paths.font("calibri.ttf"), 40, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		scoreTxt.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.screenCenter(Y);
 		scoreTxt.y -= 120;
 		scoreTxt.x += 20 - 15;
@@ -56,7 +56,7 @@ class AdvancedHUD extends BaseHUD
 		add(scoreTxt);
 
 		ratingTxt = new FlxText(0, 0, tWidth, "100%", 20);
-		ratingTxt.setFormat(Paths.font("calibri.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		ratingTxt.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		ratingTxt.screenCenter(Y);
 		ratingTxt.y -= 90;
 		ratingTxt.x += 20 - 15;
@@ -65,7 +65,7 @@ class AdvancedHUD extends BaseHUD
 		add(ratingTxt);
 
 		fcTxt = new FlxText(0, 0, tWidth, "Clear", 20);
-		fcTxt.setFormat(Paths.font("calibri.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		fcTxt.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		fcTxt.screenCenter(Y);
 		fcTxt.y -= 60;
 		fcTxt.x += 20 - 15;
@@ -73,35 +73,24 @@ class AdvancedHUD extends BaseHUD
 		fcTxt.borderSize = 1.25;
 		add(fcTxt);
 
-		gradeTxt = new FlxText(0, 0, 0, "C", 20);
-		gradeTxt.setFormat(Paths.font("calibri.ttf"), 46, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		gradeTxt.x = 20;
-		gradeTxt.color = 0xFFD800;
-		gradeTxt.y = FlxG.height - gradeTxt.height;
-		gradeTxt.scrollFactor.set();
-		gradeTxt.borderSize = 1.25;
-		add(gradeTxt);
-
 		var idx:Int = 0;
 		if (ClientPrefs.judgeCounter != 'Off'){
 			// maybe this'd benefit from a JudgeCounter object idk
+
 			for (judgment in displayedJudges){
-				var text = new FlxText(0, 0, tWidth, displayNames.get(judgment), 20);
-				text.setFormat(Paths.font("calibrib.ttf"), 24, judgeColours.get(judgment), LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				var text = new FlxText(5, 0, tWidth, displayNames.get(judgment), 20);
+				text.setFormat(Paths.font("vcr.ttf"), 20, judgeColours.get(judgment), LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				text.bold = true;
 				text.screenCenter(Y);
-				text.y -= 35 - (25 * idx);
-				text.x += 20 - 15;
+				text.y -= 35 - (22 * idx);
 				text.scrollFactor.set();
-				text.borderSize = 1.25;
+				text.borderSize = 1.125;
 				add(text);
 
-				var numb = new FlxText(0, 0, tWidth, "0", 20);
-				numb.setFormat(Paths.font("calibri.ttf"), 24, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-				numb.screenCenter(Y);
-				numb.y -= 35 - (25 * idx);
-				numb.x += 25 - 15;
+				var numb = new FlxText(5, text.y, tWidth, "0", 20);
+				numb.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 				numb.scrollFactor.set();
-				numb.borderSize = 1.25;
+				numb.borderSize = 1.125;
 				add(numb);
 
 				judgeTexts.set(judgment, numb);
@@ -109,47 +98,71 @@ class AdvancedHUD extends BaseHUD
 				idx++;
 			}
 		}else{
-			var text = new FlxText(0, 0, tWidth, "Misses", 20);
-			text.setFormat(Paths.font("calibrib.ttf"), 24, 0xBDBDBD, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
+			var text = new FlxText(5, 0, tWidth, "Misses", 20);
+			text.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			text.bold = true;
 			text.screenCenter(Y);
-			text.y -= 35;
-			text.x += 20 - 15;
+			text.y -= 35 - idx * 22;
 			text.scrollFactor.set();
 			text.borderSize = 1.25;
 			add(text);
-			var numb = new FlxText(0, 0, tWidth, "0", 20);
-			numb.setFormat(Paths.font("calibri.ttf"), 24, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			numb.screenCenter(Y);
-			numb.y -= 35;
-			numb.x += 25 - 15;
+
+			var numb = new FlxText(5, text.y, tWidth, "0", 20);
+			numb.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			numb.scrollFactor.set();
 			numb.borderSize = 1.25;
 			add(numb);
+
 			judgeTexts.set('miss', numb);
 			judgeNames.set('miss', text);
+
 			idx++;
 		}
 
-		npsIdx = idx;
-		npsTxt = new FlxText(0, 0, tWidth, "NPS: 0 (Peak: 0)", 20);
-		npsTxt.setFormat(Paths.font("calibri.ttf"), 26, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		npsTxt = new FlxText(-10, 0, tWidth+20, "NPS: 0 (Peak: 0)", 20);
+		npsTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		npsTxt.screenCenter(Y);
-		npsTxt.y -= 5 - (25 * idx);
-		npsTxt.x += 20 - 15;
+		npsTxt.y -= 5 - 22*idx;
 		npsTxt.scrollFactor.set();
 		npsTxt.borderSize = 1.25;
 		npsTxt.visible = ClientPrefs.npsDisplay;
 		add(npsTxt);
 		
-		pcTxt = new FlxText(0, 0, tWidth, "Peak Combo: 0", 20);
-		pcTxt.setFormat(Paths.font("calibri.ttf"), 26, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		pcTxt.screenCenter(Y);
-		pcTxt.y -= 5 - (25 * (ClientPrefs.npsDisplay ? (idx + 1) : idx));
-		pcTxt.x += 20 - 15;
+		pcTxt = new FlxText(-10, (ClientPrefs.npsDisplay ? (npsTxt.y + 22) : npsTxt.y), tWidth+20, "Peak Combo: 0", 20);
+		pcTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		pcTxt.scrollFactor.set();
 		pcTxt.borderSize = 1.25;
 		add(pcTxt);
 
+		gradeTxt = new FlxText(20, 0, 0, "C", 20);
+		gradeTxt.setFormat(Paths.font("vcr.ttf"), 24, 0xFFD800, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		gradeTxt.y = FlxG.height - gradeTxt.height;
+		gradeTxt.scrollFactor.set();
+		gradeTxt.borderSize = 1.25;
+
+		// Fuck it
+		var yStart:Float = Math.POSITIVE_INFINITY;
+		var yEnd:Float = Math.NEGATIVE_INFINITY;
+
+		for (obj in members){
+			if (obj is FlxText){
+				yStart = Math.min(yStart, obj.y);
+				yEnd = Math.max(yEnd, obj.y + obj.height);
+			}
+		}
+
+		/*var cockSize = yEnd - yStart;
+		var desiredStart = (FlxG.height - cockSize) * 0.5;
+		var yOffset = (desiredStart - yStart);*/
+
+		var yOffset = (FlxG.height - yEnd + yStart) * 0.5 - yStart;
+		for (obj in members){
+			if (obj is FlxText){
+				obj.y += yOffset;
+			}
+		}
+
+		add(gradeTxt);
 
 		if (hudPosition == 'Right'){
 			for(obj in members)
@@ -158,7 +171,7 @@ class AdvancedHUD extends BaseHUD
 
 		// prob gonna do my own time bar too lol but for now idc
 		timeTxt = new FlxText(PlayState.STRUM_X + (FlxG.width * 0.5) - 248, (ClientPrefs.downScroll ? FlxG.height - 44 : 19), 400, "", 32);
-		timeTxt.setFormat(Paths.font("calibri.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		timeTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		timeTxt.scrollFactor.set();
 		timeTxt.alpha = 0;
 		timeTxt.borderSize = 2;
@@ -330,8 +343,9 @@ class AdvancedHUD extends BaseHUD
 		}
 		else
 			timeTxt.size = 32;
-		pcTxt.screenCenter(Y);
-		pcTxt.y -= 5 - (25 * (ClientPrefs.npsDisplay ? npsIdx + 1 : npsIdx));
+
+		pcTxt.y = (ClientPrefs.npsDisplay ? (npsTxt.y + 22) : npsTxt.y);
+		
 		if (ClientPrefs.hitbar)
 		{
 			hitbar.screenCenter(XY);
@@ -380,22 +394,26 @@ class AdvancedHUD extends BaseHUD
 			if (judgeTexts.exists(k))
 				judgeTexts.get(k).text = Std.string(judgements.get(k));
 		}
-		super.update(elapsed);
 
+		var timeCalc:Null<Float> = null;
 
-		var songCalc:Null<Float> = null;
+		switch (ClientPrefs.timeBarType){
+			case "Percentage":
+				timeTxt.text = Math.ceil(time / songLength * 100) + "%";
+			case "Time Left":
+				timeCalc = (songLength - time);
+			case "Time Elapsed":
+				timeCalc = time;
+		}
 
-		if (ClientPrefs.timeBarType == 'Time Left')
-			songCalc = (songLength - time);
-		else if (ClientPrefs.timeBarType == 'Time Elapsed')
-			songCalc = time;
-		
-		if (songCalc != null){
-			var secondsTotal:Int = Math.floor(songCalc / 1000);
+		if (timeCalc != null){
+			var secondsTotal:Int = Math.floor(timeCalc / 1000);
 			if (secondsTotal < 0) secondsTotal = 0;
 
 			timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
 		}
+
+		super.update(elapsed);
 	}
 
 	override function set_misses(val:Int){
