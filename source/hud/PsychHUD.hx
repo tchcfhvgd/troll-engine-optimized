@@ -148,6 +148,7 @@ class PsychHUD extends BaseHUD {
 	{
 		super.changedOptions(changed);
 
+		scoreTxt.y = healthBarBG.y + 48;
 		timeTxt.y = (ClientPrefs.downScroll ? FlxG.height - 44 : 19);
 		timeBarBG.y = timeTxt.y + (timeTxt.height * 0.25);
 		timeBar.y = timeBarBG.y + 5;
