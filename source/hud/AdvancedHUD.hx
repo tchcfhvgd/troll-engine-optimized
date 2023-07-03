@@ -399,7 +399,7 @@ class AdvancedHUD extends BaseHUD
 
 		switch (ClientPrefs.timeBarType){
 			case "Percentage":
-				timeTxt.text = Math.ceil(time / songLength * 100) + "%";
+				timeTxt.text = Math.floor(time / songLength * 100) + "%";
 			case "Time Left":
 				timeCalc = (songLength - time);
 			case "Time Elapsed":
@@ -407,6 +407,8 @@ class AdvancedHUD extends BaseHUD
 		}
 
 		if (timeCalc != null){
+			timeCalc /= FlxG.timeScale;
+
 			var secondsTotal:Int = Math.floor(timeCalc / 1000);
 			if (secondsTotal < 0) secondsTotal = 0;
 
