@@ -438,7 +438,7 @@ class OptionsSubstate extends MusicBeatSubstate
 			backdrop.setGraphicSize(FlxG.width, FlxG.height);
 			backdrop.updateHitbox();
 			backdrop.screenCenter(XY);
-			backdrop.alpha = 0.5;
+			backdrop.alpha = 0.6;
 			add(backdrop);
 			FlxG.cameras.add(mainCamera, false);
 			FlxG.cameras.add(optionCamera, false);

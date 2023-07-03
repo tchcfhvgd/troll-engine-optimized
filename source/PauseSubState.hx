@@ -237,10 +237,11 @@ class PauseSubState extends MusicBeatSubstate
 
 					case 'Options':
 						var daSubstate = new OptionsSubstate();
-						this.persistentDraw = true;
+						this.persistentDraw = false;
 
 						daSubstate.goBack = (function(changedOptions:Array<String>)
 						{
+							this.persistentDraw = true;
 	 						var canResume:Bool = true;
 
 							for(opt in changedOptions){
