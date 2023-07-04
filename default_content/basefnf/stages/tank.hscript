@@ -1,4 +1,5 @@
 var tankGround:BGSprite;
+var tankmanRun;
 var boppers = [];
 
 function onLoad()
@@ -44,10 +45,10 @@ function onLoad()
 	tankGround = new BGSprite('tankRolling', 300, 300, 0.5, 0.5,['BG tank w lighting'], true);
 	add(tankGround);
 
-	/*
-	tankmanRun = new FlxTypedGroup<TankmenBG>();
+	var FlxTypedGroup = getClass("flixel.group.FlxTypedGroup");
+	tankmanRun = new FlxTypedGroup();
 	add(tankmanRun);
-	*/
+	this.spriteMap.set("tankmanRun", tankmanRun);
 
 	var ground:BGSprite = new BGSprite('tankGround', -420, -150);
 	ground.setGraphicSize(Std.int(1.15 * ground.width));
