@@ -26,9 +26,11 @@ class PsychHUD extends BaseHUD {
 	var scoreTxtTween:FlxTween;
 
 	var songHighscore:Int = 0;
-	override public function new(iP1:String, iP2:String, songName:String)
+	override public function new(iP1:String, iP2:String, songName:String, stats:Stats)
 	{
-		super(iP1, iP2, songName);
+		super(iP1, iP2, songName, stats);
+
+		stats.changedEvent.add(statChanged);
 
 		add(healthBarBG);
 		add(healthBar);
@@ -38,7 +40,7 @@ class PsychHUD extends BaseHUD {
 		songHighscore = Highscore.getScore(songName);
 
 		scoreTxt = new FlxText(0, healthBarBG.y + 48, FlxG.width, "", 20);
-		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		scoreTxt.setFormat(Paths.font("calibri.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
 		scoreTxt.visible = scoreTxt.alpha > 0;
@@ -47,23 +49,22 @@ class PsychHUD extends BaseHUD {
 		{
 			var textWidth = ClientPrefs.judgeCounter == 'Shortened' ? 150 : 200;
 			var textPosX = ClientPrefs.hudPosition == 'Right' ? (FlxG.width - 5 - textWidth) : 5;
-			var textPosY = (FlxG.height - displayedJudges.length*22) * 0.5;
+			var textPosY = (FlxG.height - displayedJudges.length*25) * 0.5;
 
 			for (idx in 0...displayedJudges.length)
 			{
 				var judgment = displayedJudges[idx];
 
-				var text = new FlxText(textPosX, textPosY + idx*22, textWidth, displayNames.get(judgment), 20);
-				text.setFormat(Paths.font("vcr.ttf"), 20, judgeColours.get(judgment), LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-				text.bold = true;
+				var text = new FlxText(textPosX, textPosY + idx*25, textWidth, displayNames.get(judgment), 20);
+				text.setFormat(Paths.font("calibrib.ttf"), 24, judgeColours.get(judgment), LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 				text.scrollFactor.set();
-				text.borderSize = 1.125;
+				text.borderSize = 1.25;
 				add(text);
 
 				var numb = new FlxText(textPosX, text.y, textWidth, "0", 20);
-				numb.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				numb.setFormat(Paths.font("calibri.ttf"), 24, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 				numb.scrollFactor.set();
-				numb.borderSize = 1.125;
+				numb.borderSize = 1.25;
 				add(numb);
 
 				judgeTexts.set(judgment, numb);
@@ -71,8 +72,9 @@ class PsychHUD extends BaseHUD {
 			}
 		}
 
+
 		timeTxt = new FlxText(PlayState.STRUM_X + (FlxG.width * 0.5) - 248, (ClientPrefs.downScroll ? FlxG.height - 44 : 19), 400, "", 32);
-		timeTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		timeTxt.setFormat(Paths.font("calibri.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		timeTxt.scrollFactor.set();
 		timeTxt.alpha = 0;
 		timeTxt.borderSize = 2;
@@ -149,26 +151,33 @@ class PsychHUD extends BaseHUD {
 		super.changedOptions(changed);
 
 		scoreTxt.y = healthBarBG.y + 48;
-		timeTxt.y = (ClientPrefs.downScroll ? FlxG.height - 44 : 19);
-		timeBarBG.y = timeTxt.y + (timeTxt.height * 0.25);
-		timeBar.y = timeBarBG.y + 5;
-		timeBar.alpha = ClientPrefs.timeOpacity * alpha * tweenProg;
-		timeTxt.alpha = ClientPrefs.timeOpacity * alpha * tweenProg;
-		hitbar.visible = ClientPrefs.hitbar;
+
+		updateTime = (ClientPrefs.timeBarType != 'Disabled' && ClientPrefs.timeOpacity > 0);
 
 		timeTxt.visible = updateTime;
 		timeBarBG.visible = updateTime;
 		timeBar.visible = updateTime;
 
-		if (ClientPrefs.timeBarType == 'Song Name')
-		{
-			timeTxt.text = songName;
-			timeTxt.size = 24;
-			timeTxt.y += 3;
+		if (updateTime){
+			timeTxt.y = (ClientPrefs.downScroll ? FlxG.height - 44 : 19);
+			timeBarBG.y = timeTxt.y + (timeTxt.height * 0.25);
+			timeBar.y = timeBarBG.y + 5;
+			timeBar.alpha = ClientPrefs.timeOpacity * alpha * tweenProg;
+			timeTxt.alpha = ClientPrefs.timeOpacity * alpha * tweenProg;
+
+			if (ClientPrefs.timeBarType == 'Song Name')
+			{
+				timeTxt.text = songName;
+				timeTxt.size = 24;
+				timeTxt.y += 3;
+			}
+			else{
+				timeTxt.text = "";
+				timeTxt.size = 32;
+			}
 		}
-		else
-			timeTxt.size = 32;
-		
+
+		hitbar.visible = ClientPrefs.hitbar;
 
 		if (ClientPrefs.hitbar)
 		{
@@ -201,54 +210,32 @@ class PsychHUD extends BaseHUD {
 			if (judgeTexts.exists(k))
 				judgeTexts.get(k).text = Std.string(judgements.get(k));
 		}
+		
+		if (updateTime){
+			var timeCalc:Null<Float> = null;
 
-		var timeCalc:Null<Float> = null;
+			switch (ClientPrefs.timeBarType){
+				case "Percentage":
+					timeTxt.text = Math.floor(time / songLength * 100) + "%";
+				case "Time Left":
+					timeCalc = (songLength - time);
+				case "Time Elapsed":
+					timeCalc = time;
+			}
 
-		switch (ClientPrefs.timeBarType){
-			case "Percentage":
-				timeTxt.text = Math.floor(time / songLength * 100) + "%";
-			case "Time Left":
-				timeCalc = (songLength - time);
-			case "Time Elapsed":
-				timeCalc = time;
-		}
+			if (timeCalc != null){
+				timeCalc /= FlxG.timeScale;
 
-		if (timeCalc != null){
-			timeCalc /= FlxG.timeScale;
+				var secondsTotal:Int = Math.floor(timeCalc / 1000);
+				if (secondsTotal < 0) secondsTotal = 0;
 
-			var secondsTotal:Int = Math.floor(timeCalc / 1000);
-			if (secondsTotal < 0) secondsTotal = 0;
-
-			timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
+				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
+			}
 		}
 
 		super.update(elapsed);
 	}
 
-	override function set_misses(val:Int)
-	{
-		if (misses != val)
-		{
-			misses = val;
-			var judgeName = judgeNames.get('miss');
-			var judgeTxt = judgeTexts.get('miss');
-			if (judgeName != null)
-			{
-				FlxTween.cancelTweensOf(judgeName.scale);
-				judgeName.scale.set(1.075, 1.075);
-				FlxTween.tween(judgeName.scale, {x: 1, y: 1}, 0.2);
-			}
-			if (judgeTxt != null)
-			{
-				FlxTween.cancelTweensOf(judgeTxt.scale);
-				judgeTxt.scale.set(1.075, 1.075);
-				FlxTween.tween(judgeTxt.scale, {x: 1, y: 1}, 0.2);
-				
-				judgeTxt.text = Std.string(val);
-			}
-		}
-		return misses;
-	}
 
 	override function noteJudged(judge:JudgmentData, ?note:Note, ?field:PlayField)
 	{
@@ -284,6 +271,31 @@ class PsychHUD extends BaseHUD {
 					scoreTxtTween = null;
 				}
 			});
+		}
+	}
+
+	function statChanged(stat:String, val:Dynamic)
+	{
+		switch (stat)
+		{
+			case 'misses':
+				misses = val;
+				var judgeName = judgeNames.get('miss');
+				var judgeTxt = judgeTexts.get('miss');
+				if (judgeName != null)
+				{
+					FlxTween.cancelTweensOf(judgeName.scale);
+					judgeName.scale.set(1.075, 1.075);
+					FlxTween.tween(judgeName.scale, {x: 1, y: 1}, 0.2);
+				}
+				if (judgeTxt != null)
+				{
+					FlxTween.cancelTweensOf(judgeTxt.scale);
+					judgeTxt.scale.set(1.075, 1.075);
+					FlxTween.tween(judgeTxt.scale, {x: 1, y: 1}, 0.2);
+
+					judgeTxt.text = Std.string(val);
+				}
 		}
 	}
 
