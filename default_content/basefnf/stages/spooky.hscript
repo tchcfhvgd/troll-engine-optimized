@@ -1,11 +1,5 @@
-var halloweeBG:FlxSprite;
-
 function onLoad(stage, foreground)
 {
-	var add = function(o){
-		return stage.add(o);
-	}
-
 	var hallowTex = Paths.getSparrowAtlas('halloween_bg');
 	if(!ClientPrefs.lowQuality) {
 		halloweenBG = new FlxSprite(-200, -100);

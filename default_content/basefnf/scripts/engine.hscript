@@ -1,0 +1,33 @@
+function onCreatePost()
+{
+	// this is what the base game does (KIND OF)
+	var camPos = game.dad.getGraphicMidpoint();
+	camPos.x -= game.dad.x - 100;
+	camPos.y -= game.dad.y - 100;
+	
+	switch (game.dad.curCharacter)
+	{
+		case 'gf':
+			camPos.x += 600;
+		case 'dad':
+			camPos.x += 400;
+		case 'pico':
+			camPos.x += 600;
+		case 'senpai':
+			camPos.x += 300;		
+		case'senpai-angry':
+			camPos.x += 300;
+		case 'spirit':
+			camPos.x += 300;
+	}
+	
+	game.camFollowPos.setPosition(camPos.x, camPos.y);
+	camPos.put();
+}
+
+// not needed for un-tgt'd troll engine
+// but just incase you're using in tgt:
+function postSetupNoteSplash(x, y, note, texture, hueColor, satColor, brtColor){
+    this.scale.set(1, 1);
+    this.updateHitbox();
+}
