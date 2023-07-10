@@ -12,24 +12,27 @@ import flixel.group.FlxSpriteGroup;
 
 class BaseHUD extends FlxSpriteGroup {
 	var stats:Stats;
+	// we should put this in a json or smth idk
+
 	// just some ref vars
 	static var fullDisplays:Map<String, String> = [
-		"epic" => "Killers",
-		"sick" => "Awesomes",
-		"good" => "Cools",
-		"bad" => "Gays",
-		"shit" => "Retards",
-		"miss" => "Fails",
+		"epic" => "Epics",
+		"sick" => "Sicks",
+		"good" => "Goods",
+		"bad" => "Bads",
+		"shit" => "Shits",
+		"miss" => "Misses",
 		"cb" => "Combo Breaks"
 	];
 
+
 	static var shortenedDisplays:Map<String, String> = [
-		"epic" => "KL",
-		"sick" => "AW",
-		"good" => "CL",
-		"bad" => "GY",
-		"shit" => "RT",
-		"miss" => "L",
+		"epic" => "EP",
+		"sick" => "SK",
+		"good" => "GD",
+		"bad" => "BD",
+		"shit" => "SH",
+		"miss" => "MS",
 		"cb" => "CB"
 	];
 	

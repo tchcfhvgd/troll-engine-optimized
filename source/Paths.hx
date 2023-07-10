@@ -562,7 +562,7 @@ class Paths
 		return modFolders('images/' + key + '.xml');
 
 	inline static public function modsTxt(key:String)
-		return modFolders('data/' + key + '.txt');
+		return modFolders(key + '.txt');
 
 	inline static public function modsJson(key:String)
 		return modFolders('data/' + key + '.json');
@@ -572,6 +572,8 @@ class Paths
 	
 	inline static public function modsShaderVertex(key:String, ?library:String)
 		return modFolders('shaders/'+key+'.vert');
+
+	
 
 	inline static public function getFolders(dir:String, ?modsOnly:Bool = false){
 		var foldersToCheck:Array<String> = [

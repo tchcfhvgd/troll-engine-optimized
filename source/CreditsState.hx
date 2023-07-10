@@ -113,7 +113,7 @@ class CreditsState extends MusicBeatState
 			#if MODS_ALLOWED
 			Paths.currentModDirectory = '';
 	
-			var modCredits = Paths.modsTxt('credits');
+			var modCredits = Paths.modsTxt('data/credits');
 			if (Paths.exists(modCredits)){
 				trace('using credits from mod folder');
 				creditsPath = modCredits;
