@@ -185,19 +185,19 @@ class Stats {
 			if (goods > 0)
 			{
 				if (goods < 10 && goods > 0)
-					clear = 'SDC'; // Single Digit Goods
+					clear = 'SDG'; // Single Digit Goods
 				else
-					clear = 'CFC'; // Good Full Combo
+					clear = 'GFC'; // Good Full Combo
 			}
 			else if (sicks > 0)
 			{
 				if (sicks < 10 && sicks > 0)
-					clear = 'SDA'; // Single Digit Sicks
+					clear = 'SDS'; // Single Digit Sicks
 				else
-					clear = 'AFC'; // Sick Full Combo
+					clear = 'SFC'; // Sick Full Combo
 			}
 			else if (epics > 0)
-				clear = "KFC";
+				clear = "EFC";
 			if (useFlags)
 			{
 				if (goods == 1)
