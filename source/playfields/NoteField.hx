@@ -416,6 +416,8 @@ class NoteField extends FieldBase
 		var sv = PlayState.instance.getSV(hold.strumTime).speed;
 		var scalePoint = FlxPoint.weak(1, 1);
 
+
+		// TODO: make it so hold caps dont stretch
 		for (sub in 0...holdSubdivisions)
 		{
 			var prog = sub / (holdSubdivisions + 1);

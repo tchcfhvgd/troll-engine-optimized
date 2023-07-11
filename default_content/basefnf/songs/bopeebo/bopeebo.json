@@ -129,16 +129,6 @@
 				]
 			],
 			[
-				47400,
-				[
-					[
-						"Hey!",
-						"Something Else",
-						""
-					]
-				]
-			],
-			[
 				52200,
 				[
 					[
@@ -897,14 +887,12 @@
 					[
 						47400,
 						2,
-						0,
-						"No Animation"
+						0
 					],
 					[
 						47400,
 						3,
-						0,
-						"No Animation"
+						0
 					]
 				],
 				"typeOfSection": 0,
@@ -1355,6 +1343,16 @@
 				"sectionBeats": 4,
 				"changeBPM": false,
 				"mustHitSection": true
+			},
+			{
+				"gfSection": false,
+				"altAnim": false,
+				"typeOfSection": 0,
+				"sectionNotes": [],
+				"bpm": 100,
+				"sectionBeats": 4,
+				"changeBPM": false,
+				"mustHitSection": true
 			}
 		],
 		"player2": "dad",
@@ -1362,10 +1360,6 @@
 		"validScore": true,
 		"needsVoices": true,
 		"stage": "stage",
-		"metadata": {
-			"artist": "Unspecified",
-			"charter": "Unspecified"
-		},
 		"speed": 1.8,
 		"bpm": 100
 	}

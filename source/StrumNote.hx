@@ -71,6 +71,8 @@ class StrumNote extends NoteObject
 		scrollFactor.set();
 	}
 
+
+	// TODO: allow this to take arguments like Note
 	public function reloadNote()
 	{
 		isQuant = false;
