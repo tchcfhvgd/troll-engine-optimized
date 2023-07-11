@@ -11,7 +11,6 @@ function onCreatePost(){
         note.antialiasing = false;
     }
 }
-
 function postReceptorGeneration(){
     for(field in game.playfields){
         for(strum in field.strumNotes){
@@ -22,8 +21,8 @@ function postReceptorGeneration(){
             strum.height /= 5;
             strum.loadGraphic(Paths.image("pixelUI/NOTE_assets"), true, Math.floor(strum.width), Math.floor(strum.height));
             strum.animation.add('static', [strum.noteData]);
-            strum.animation.add('pressed', [strum.noteData + 4, strum.noteData + 8]);
-            strum.animation.add('confirm', [strum.noteData + 12, strum.noteData + 16]);
+            strum.animation.add('pressed', [strum.noteData + 4, strum.noteData + 8], 12);
+            strum.animation.add('confirm', [strum.noteData + 12, strum.noteData + 16], 24);
             strum.scale.set(6, 6);
             strum.playAnim("static", true);
         }
