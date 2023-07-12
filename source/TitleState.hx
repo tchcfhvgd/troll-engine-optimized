@@ -101,6 +101,7 @@ class TitleState extends MusicBeatState
 		titleText.animation.play('idle');
 
 		titleText.updateHitbox();
+		titleText.screenCenter(X);
 
 		//
 		blackScreen = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
