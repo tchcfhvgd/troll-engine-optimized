@@ -60,33 +60,44 @@ class GameOverSubstate extends MusicBeatSubstate
 	{
 		instance = this;
 
-		if (genericBitch != null){
-			genericBitch.alpha = 0;
-			genericBitch.scale.set(2.25, 2.25);
-
-			var frameRate = 1/24;
-			FlxTween.tween(genericBitch, {"scale.x": 1.22, "scale.y": 1.22, alpha: 1}, 1, {ease: FlxEase.circIn}).then(
-				FlxTween.tween(genericBitch, {"scale.x": 1.196, "scale.y": 1.196}, frameRate, {onComplete: (_)->{ if (!isEnding) FlxG.sound.play(Paths.sound(genericSound), 1, false);}})).then(
-					FlxTween.tween(genericBitch, {"scale.x": 1.1, "scale.y": 1.1}, frameRate*35)).then(
-						FlxTween.tween(genericBitch, {"scale.x": 1, "scale.y": 1}, frameRate*60, {onStart: (fuck)->{ if (!isEnding) FlxG.sound.playMusic(Paths.music(genericMusic), 0.6, true); FlxG.sound.music.fadeIn(0.4, 0.6, 1);}})).then(
-							FlxTween.tween(genericBitch, {"scale.x": 1.01, "scale.y": 1.01}, frameRate * 14, {type: PINGPONG}));
+		if (generic){
+			FlxG.camera.bgColor = 0x00000000;
+			FlxTween.num(0, 1, 0.6, {ease: FlxEase.quadOut, onComplete: (twn)->{
+				loser.animation.play('lose');
+				FlxTween.tween(restart, {alpha: 1}, 1, {ease: FlxEase.quartInOut});
+				FlxTween.tween(restart, {y: restart.y + 40}, 7, {ease: FlxEase.quartInOut, type: PINGPONG});
+			}}, (prog)->{
+				FlxG.camera.bgColor.alphaFloat = prog;	
+			});		
 		}
 
 		PlayState.instance.callOnScripts('onGameOverStart', []);
 		super.create();
 	}
 
+	var generic:Bool = false;
+	var loser:FlxSprite;
+	var restart:FlxSprite;
 	function doGenericGameOver()
 	{
-		Conductor.changeBPM(100);
+		generic = true;
 
-		genericBitch = new FlxSprite().loadGraphic(Paths.image(genericName));
-		genericBitch.scrollFactor.set();
-		genericBitch.screenCenter();
-		add(genericBitch);
-
-		FlxG.camera.bgColor = FlxColor.BLACK;
-		FlxG.camera.follow(genericBitch, LOCKON);
+		loser = new FlxSprite(100, 100);
+		loser.frames = Paths.getSparrowAtlas("characters/gameover/lose");
+		loser.animation.addByPrefix('lose', 'lose', 24, false);
+		loser.animation.callback = (name, frameNumber, frameIndex)->{
+			if (frameNumber == 6 && !isEnding)
+				FlxG.sound.play(Paths.sound(genericSound));
+		}
+		loser.scrollFactor.set();
+		add(loser);
+			
+		restart = new FlxSprite(500, 50, Paths.image("characters/gameover/restart"));
+		restart.setGraphicSize(Std.int(restart.width * 0.6));
+		restart.updateHitbox();
+		restart.alpha = 0;
+		restart.scrollFactor.set();
+		add(restart);
 	}
 
 	public function new(x:Float, y:Float, camX:Float, camY:Float, ?isPlayer:Bool)
@@ -94,15 +105,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		super();
 
 		var game = PlayState.instance;
-
 		game.setOnScripts('inGameOver', true);
-
-		game.inst.volume = 0;
-		game.inst.stop();
-		game.vocals.volume = 0;
-		game.vocals.stop();
-
-		Conductor.songPosition = 0;
 
 		var deathName:String = characterName;
 
@@ -119,20 +122,24 @@ class GameOverSubstate extends MusicBeatSubstate
 			charInfo = null;
 
 			Cache.loadWithList([
-				{path: genericName, type: 'IMAGE'},
-				{path: genericSound, type: 'SOUND'},
-				{path: genericMusic, type: 'MUSIC'},
-				//{path: endSoundName, type: 'MUSIC'}
+				{path: "characters/gameover/lose"},
+				{path: "characters/gameover/restart"},
 			]);
 
 			return doGenericGameOver(); 
-			
-			/*
-			deathName = Character.DEFAULT_CHARACTER + "-dead";
-			charInfo = Character.getCharacterFile(deathName);
-			*/
 		}
 		
+		game.inst.volume = 0;
+		game.inst.stop();
+		game.vocals.volume = 0;
+		game.vocals.stop();
+		for (track in game.tracks){
+			track.volume = 0;
+			track.stop();
+		}
+
+		Conductor.songPosition = 0;
+
 		Cache.loadWithList([
 			{path: charInfo.image, type: 'IMAGE'},
 			{path: deathSoundName, type: 'SOUND'},

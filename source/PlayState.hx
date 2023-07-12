@@ -2882,11 +2882,6 @@ class PlayState extends MusicBeatState
 
 				paused = true;
 
-				vocals.stop();
-				inst.stop();
-				for (track in tracks)
-					track.stop();
-
 				for (tween in modchartTweens)
 					tween.active = true;
 				for (timer in modchartTimers)
@@ -2901,9 +2896,6 @@ class PlayState extends MusicBeatState
 					return true;
 				}else{
 					var char = playOpponent ? dad : boyfriend;
-					
-					inst.stop();
-					vocals.stop();
 					
 					openSubState(new GameOverSubstate(
 						char.getScreenPosition().x - char.positionArray[0],
