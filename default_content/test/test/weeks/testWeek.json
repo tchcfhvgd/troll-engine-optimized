@@ -1,0 +1,35 @@
+{
+    "week": {
+        "story_mode": {
+            "display": {
+                "name": "Test Week Lol!",
+                "player": "bf",
+                "metronome": "gf",
+                "opponent": "dad",
+                "image": "testWeek"
+            },
+            "difficulties": ["hard"]
+        },
+        "freeplay": {
+            "display": {
+                "name": "Test",
+                "icon": "test",
+                "color": [0, 255, 0]
+            }
+        },
+        "requirements": [
+            {
+                "trigger": "finished",
+                "conditions": {
+                    "week": "week1"
+                }
+            }
+        ],
+        "default_week": false,
+        "songs": [
+            {
+                "name": "test"
+            }
+        ]
+    }
+}

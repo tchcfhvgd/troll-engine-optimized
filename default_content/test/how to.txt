@@ -1,0 +1,14 @@
+Subject to change!
+
+Currently: Works similarly to minecraft resource packs
+Put a folder with a name of the namespace. 
+"troll_engine" is a built-in one which correlates to the engine's assets, so to override Troll Engine stuff you'd put it in the troll_engine folder
+If you wanna replace another mod's assets you'd name it the namespace they use
+
+Should allow mods more freedom esp. since you can now have multiple mods w/ the same song name as they'd be prefixed w/ the namespace in the save files etc
+(so instead of it being saved as 'no-villains' its saved as 'tgt:no-villains')
+You can also reference things from other mods by prefixing it with its namespace too i.e Paths.image("tgt:stage1/ground")
+
+Dependencies means you can make the mod only run if other content exists, and will ensure this mod runs some time after them in the load order.
+
+Speaking of load order, I wanna make a mod menu that lets you adjust mod load order similar to Minecraft resource packs menu

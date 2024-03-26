@@ -1,0 +1,34 @@
+explanation of the week format!!
+
+- week: Root of the format. Leave this!!
+    - story_mode: Contains all data related to this week in the story mode menu. If this is ommitted, then the week won't appear in Story Mode
+        - display: Contains data about how to display the week in story mode.
+            - name: Week name. Displayed in the top right of the story menu. Examples are "Mommy Must Murder" for week 4, and "Hating Simulator" for week 6. Required!
+            - player: Character to display on the right side. Optional, defaults to bf
+            - metronome: Character to display in the middle. Optional, defaults to gf
+            - opponent: Character to display on the left side. Optional, defaults to dad
+            - image: Image to use in the story mode week list. Optional, defaults to the file name
+        - difficulties: Array of difficulties the week can be played in.
+
+    - freeplay: Contains all data related to this week in the freeplay menu. If omitted, then the week won't appear in Freeplay.
+        - display: Contains data about how to display the week in freeplay.
+            - name: Container name. Displayed as the name of the container holding the songs. Required!
+            - icon: Default health icon to be used for the songs. Songs can also define their own health icons. Optional. If song and freeplay both have no default icon, then the song will grab the health icon automatically (when possible)
+            - color: Default background colour to be used for the songs. Songs can also define their own colours. Can be an RGB array or a hex code. Optional, defaults to #9271fd
+    
+    - requirements: Array of objects that describes the requirements for this week to be unlocked. Multiple of the same trigger can be specified. Optional. If empty of omitted, then the week will always be available to play.
+    - default_week: When true, songs in the mod will automatically be added to this week.
+    - songs: Array of song objects
+
+
+Requirement objects:
+    - trigger: Requirement for the week.
+    - conditions: Conditions/Arguments for the trigger. For example, the "finished" trigger has 2 possible conditions, "song" and "week'
+
+Song objects:
+    name: Song name. Make sure it matches the song name in the songs folder!
+    display: Contains data about how to display the song in freeplay and story mode.
+        - name: Name the song should be displayed as. Can be completely different to the normal name.
+        - icon: Health icon for the song in freeplay. Defaults to the week's default icon.
+        - color: Background colour for the song in freeplay. Can be an RGB array or a hex code. Defaults to the week's default colour.
+        
