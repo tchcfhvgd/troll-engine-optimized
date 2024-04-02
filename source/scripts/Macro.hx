@@ -132,6 +132,8 @@ class Macro {
 		}
 
         var constructor:Field;
+        var multipleScripts:Bool = false;
+        
 		for (field in fields)
 		{
 			if (field.name == 'new')
@@ -139,6 +141,10 @@ class Macro {
 				constructor = field;
 				continue;
 			}
+			else if (field.name == 'scripts'){
+                multipleScripts = true;
+                continue;
+            }
 			if (field.meta != null && field.meta.length > 0)
 			{
 				for (entry in field.meta)
@@ -507,35 +513,52 @@ class Macro {
                     );
                     
 
-                    
-                    // injects code AFTER the existing class new() code
-                    body.push(macro
-                        {
-                            var defaultVars:Map<String, Dynamic> = [];
-                            defaultVars.set("super", this._scriptSuperObject);
-                            defaultVars.set("this", this);
-                            defaultVars.set("add", add);
-                            defaultVars.set("remove", remove);
-                            defaultVars.set("insert", insert);
-                            defaultVars.set("members", members);
-                            defaultVars.set($v{className}, $i{className});
 
-							for (filePath in Paths.getFolders($v{folder}))
+					// injects code AFTER the existing class new() code
+					body.push(macro
+                    {
+                        var defaultVars:Map<String, Dynamic> = [];
+                        defaultVars.set("super", this._scriptSuperObject);
+                        defaultVars.set("this", this);
+                        defaultVars.set("add", add);
+                        defaultVars.set("remove", remove);
+                        defaultVars.set("insert", insert);
+                        defaultVars.set("members", members);
+                        defaultVars.set($v{className}, $i{className});
+                    });
+                        
+
+                    if(multipleScripts){
+						body.push(macro
+                        {
+                            for (filePath in Paths.getFolders($v{folder}))
                             {
                                 var file = filePath + "extension/" + $v{className} + ".hscript";
                                 if (Paths.exists(file))
                                 {
-                                    // TODO: make this an array so you can have mutliple extensions lol
+                                    var newScript = scripts.FunkinHScript.fromFile(file, $v{className}, defaultVars);
+									newScript.call("new", []);
+									scripts.push(newScript);
+                                }
+                            }
+                        });
+                    }else{
+						body.push(macro
+                        {
+                            for (filePath in Paths.getFolders($v{folder}))
+                            {
+                                var file = filePath + "extension/" + $v{className} + ".hscript";
+                                if (Paths.exists(file))
+                                {
                                     script = scripts.FunkinHScript.fromFile(file, $v{className}, defaultVars);
                                     script.call("new", []);
                                     break;
                                 }
                             }
+                        });
+                    }
+                    
 
-
-                        }
-                    );
-                        
 
                     func.expr = macro $b{body};
                 default:

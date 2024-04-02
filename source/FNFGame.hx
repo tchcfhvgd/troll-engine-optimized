@@ -19,7 +19,6 @@ class FNFGame extends FlxGame {
 					if (Paths.exists(filePath + fileName)){
                         _requestedState.destroy();
                         _requestedState = new HScriptState(fileName);
-						trace(fileName);
                         return super.switchState();
                     }
                 }

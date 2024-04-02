@@ -48,13 +48,14 @@
 	<assets path="assets"	unless="tgt"/>
 	<assets path='default_content'	rename='content'	embed='false' />
 
-    <!-- PSYCH ENGINE CUSTOMIZATION -->
-	<define name="USE_EPIC_JUDGEMENT" />
-	<define name="VIDEOS_ALLOWED" if="cpp"/>
-	<define name="HSCRIPT_ALLOWED" />
-	<define name="MODS_ALLOWED" if="desktop" />
-	<define name="CRASH_HANDLER" if="desktop" />
-	<define name="MULTICORE_LOADING" if="windows" />
+    <!-- TROLL ENGINE CUSTOMIZATION -->
+    <define name="CONTENT_V2" /> <!--Lets you use Content Format V2-->
+	<define name="USE_EPIC_JUDGEMENT" /> <!--Allows Epic judgements to be used-->
+	<define name="VIDEOS_ALLOWED" if="cpp"/> <!--Allows videos to play-->
+	<define name="HSCRIPT_ALLOWED" /><!--Allows you to use HScript (pretty much required tbh)-->
+	<define name="MODS_ALLOWED" if="desktop" /><!--Allows mods/content to load (pretty much required tbh [2])-->
+	<define name="CRASH_HANDLER" if="desktop" /> <!--Runs code related to handling crashes-->
+	<define name="MULTICORE_LOADING" if="windows" /> <!--Allows you to enable multicore loading, which uses multiple threads to load assets-->
 
     <!--Remove if you dont want Lua to be usable. Note that if you remove this, you should remove PE_MOD_COMPATIBILITY too -->
 	<define name="LUA_ALLOWED" if="desktop cpp"/>

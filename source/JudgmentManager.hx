@@ -241,10 +241,13 @@ class JudgmentManager {
     public function new(?useEpics:Bool)
     {
         #if USE_EPIC_JUDGEMENT
-		if (ClientPrefs.useEpics || useEpics==true){
-			this.useEpics = true;
-            return;
-		}
+		if (useEpics == null)
+			useEpics = ClientPrefs.useEpics;
+
+		this.useEpics = useEpics;
+
+		if (this.useEpics)return;
+		
 
 		hittableJudgments.remove(TIER5);
 		#end
