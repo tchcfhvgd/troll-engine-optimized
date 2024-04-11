@@ -1,5 +1,6 @@
 package;
 
+import editors.ChartingState;
 import Github.Release;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -125,10 +126,13 @@ class Main extends Sprite
 
 				case "songselect":
 					StartupState.nextState = SongSelectState;
+                    
+				case "charter":
+					StartupState.nextState = ChartingState;
 
 				case "debug":
 					PlayState.chartingMode = true;
-				
+					Main.showDebugTraces = true;
 				case "showdebugtraces":
 					Main.showDebugTraces = true;
 			}

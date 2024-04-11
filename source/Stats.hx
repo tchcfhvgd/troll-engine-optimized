@@ -242,7 +242,7 @@ class Stats {
     public function getScoreRecord():ScoreRecord{
 		return {
 			score: score,
-			comboBreaks: judgements.get("cb"), // since we cant detect the combo breaks from here
+			comboBreaks: judgements.get("cb"),
 			accuracyScore: totalNotesHit,
 			maxAccuracyScore: totalPlayed,
 			judges: judgements,

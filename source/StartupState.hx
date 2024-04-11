@@ -119,6 +119,7 @@ class StartupState extends FlxState
 		Paths.music('freakyIntro');
 		Paths.music('freakyMenu');
 
+		ContentHelper.loadContent();
 		/*
 		if (nextState == PlayState || nextState == editors.ChartingState){
 			Paths.currentModDirectory = "chapter1";

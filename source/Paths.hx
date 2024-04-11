@@ -673,7 +673,7 @@ class Paths
 
 	static public function pushGlobalContent(){
 		globalContent = [];
-		for (mod in Paths.getModDirectories())
+		for (mod in Paths.getModDirectories(false))
 		{
 			var path = Paths.mods('$mod/metadata.json');
 			var rawJson:Null<String> = Paths.getContent(path);
@@ -722,8 +722,11 @@ class Paths
 	// I might end up making this just return an array of loaded mods and require you to press a refresh button to reload content lol
 	// mainly for optimization reasons, so its not going through the entire content folder every single time
 
-	static public function getModDirectories():Array<String> 
+	static public function getModDirectories(?onlyLoaded = true):Array<String> 
 	{
+		if (onlyLoaded)
+			return ContentHelper.loadedContent;
+
 		var list:Array<String> = [];
 		if (FileSystem.exists(modFolderPath))
 		{

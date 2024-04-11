@@ -39,6 +39,7 @@ class Macro {
 
 		var superFields:Map<String, ClassField> = [];
 		var superFieldNames:Array<String> = [];
+		var multipleScripts:Bool = false;
 
 		if (cl.superClass != null && cl.superClass.t != null)
 		{
@@ -55,6 +56,9 @@ class Macro {
 					{
 						if (field.meta.has(":inject"))
 							toInject.push(field.name);
+
+						if (field.name == 'hscripts')
+							multipleScripts = true;
 
 						if (!superFieldNames.contains(field.name))
 						{
@@ -132,7 +136,7 @@ class Macro {
 		}
 
         var constructor:Field;
-        var multipleScripts:Bool = false;
+        
         
 		for (field in fields)
 		{
@@ -141,7 +145,7 @@ class Macro {
 				constructor = field;
 				continue;
 			}
-			else if (field.name == 'scripts'){
+			else if (field.name == 'hscripts'){
                 multipleScripts = true;
                 continue;
             }
@@ -308,25 +312,83 @@ class Macro {
 						var superName = "_super_" + name;
 
 						// main bulk of the injected code
-						if (daRet.toString() == 'Void'){
-							expr.push(macro
-                            {
-                                if (script!=null && script.exists($v{name}))
-                                {
-									script.executeFunc($v{name}, $a{args}, null, [$v{'state$name'} => $i{superName}]);
-                                    return;
-                                }
-                                super.$name($a{args});
-                            });
+						if (multipleScripts)
+						{
+							if (daRet.toString() == 'Void')
+							{
+								expr.push(macro
+									{
+										if (hscripts.length > 0)
+										{
+											var rVal:Dynamic = scripts.Globals.Function_Continue;
+											for (script in hscripts)
+											{
+												if (script.exists($v{name}))
+												{
+													var ret:Dynamic = script.executeFunc($v{name}, $a{args}, null, [$v{'state$name'} => $i{superName}]);
+													if (ret == scripts.Globals.Function_Halt)
+														return;
+
+													if (ret != scripts.Globals.Function_Continue && ret != null)
+														rVal = ret;
+												}
+											}
+											if (rVal != scripts.Globals.Function_Continue)
+												return;
+										}
+										super.$name($a{args});
+									});
+							}
+							else
+							{
+								expr.push(macro
+									{
+										if (hscripts.length > 0)
+										{
+											var rVal:Dynamic = scripts.Globals.Function_Continue;
+											for (script in hscripts)
+                                            {
+                                                if (script.exists($v{name})){
+                                                    var ret:Dynamic = script.executeFunc($v{name}, $a{args}, null, [$v{'state$name'} => $i{superName}]);
+													if (ret == scripts.Globals.Function_Halt)
+														return rVal;
+
+													if (ret != scripts.Globals.Function_Continue
+														&& ret != null
+														&& Std.isOfType(ret, $v{daRet}))
+														rVal = ret;
+                                                }
+                                            }
+											if (rVal != scripts.Globals.Function_Continue)
+											    return rVal;
+                                        }
+										return super.$name($a{args});
+									});
+							}
                         }else{
-							expr.push(macro
-                            {
-                                if (script!=null && script.exists($v{name}))
+                            if (daRet.toString() == 'Void'){
+                                expr.push(macro
                                 {
-									return script.executeFunc($v{name}, $a{args}, null, [$v{'state$name'} => $i{superName}]);
-                                }
-                                return super.$name($a{args});
-                            });
+                                    if (script!=null && script.exists($v{name}))
+                                    {
+                                        var val:Dynamic = script.executeFunc($v{name}, $a{args}, null, [$v{'state$name'} => $i{superName}]);
+										if (val != scripts.Globals.Function_Continue && val != scripts.Globals.Function_Halt)
+                                            return;
+                                    }
+                                    super.$name($a{args});
+                                });
+                            }else{
+                                expr.push(macro
+                                {
+                                    if (script!=null && script.exists($v{name}))
+                                    {
+                                        var val:Dynamic = script.executeFunc($v{name}, $a{args}, null, [$v{'state$name'} => $i{superName}]);
+                                        if (val != scripts.Globals.Function_Continue && val != scripts.Globals.Function_Halt && Std.isOfType(val, $v{daRet}))
+                                            return val;
+                                    }
+                                    return super.$name($a{args});
+                                });
+                            }
                         }
 
 
@@ -512,25 +574,20 @@ class Macro {
                         }
                     );
                     
-
-
-					// injects code AFTER the existing class new() code
-					body.push(macro
-                    {
-                        var defaultVars:Map<String, Dynamic> = [];
-                        defaultVars.set("super", this._scriptSuperObject);
-                        defaultVars.set("this", this);
-                        defaultVars.set("add", add);
-                        defaultVars.set("remove", remove);
-                        defaultVars.set("insert", insert);
-                        defaultVars.set("members", members);
-                        defaultVars.set($v{className}, $i{className});
-                    });
                         
-
+					trace(multipleScripts, className);
                     if(multipleScripts){
 						body.push(macro
                         {
+                            var defaultVars:Map<String, Dynamic> = [];
+                            defaultVars.set("super", this._scriptSuperObject);
+                            defaultVars.set("this", this);
+                            defaultVars.set("add", add);
+                            defaultVars.set("remove", remove);
+                            defaultVars.set("insert", insert);
+                            defaultVars.set("members", members);
+                            defaultVars.set($v{className}, $i{className});
+
                             for (filePath in Paths.getFolders($v{folder}))
                             {
                                 var file = filePath + "extension/" + $v{className} + ".hscript";
@@ -538,13 +595,22 @@ class Macro {
                                 {
                                     var newScript = scripts.FunkinHScript.fromFile(file, $v{className}, defaultVars);
 									newScript.call("new", []);
-									scripts.push(newScript);
+									hscripts.push(newScript);
                                 }
                             }
                         });
                     }else{
 						body.push(macro
                         {
+                            var defaultVars:Map<String, Dynamic> = [];
+                            defaultVars.set("super", this._scriptSuperObject);
+                            defaultVars.set("this", this);
+                            defaultVars.set("add", add);
+                            defaultVars.set("remove", remove);
+                            defaultVars.set("insert", insert);
+                            defaultVars.set("members", members);
+                            defaultVars.set($v{className}, $i{className});
+
                             for (filePath in Paths.getFolders($v{folder}))
                             {
                                 var file = filePath + "extension/" + $v{className} + ".hscript";

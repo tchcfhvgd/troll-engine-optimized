@@ -150,13 +150,6 @@ class PlayState extends MusicBeatState
 
 	public var scoreTxt:FlxText = new FlxText();
 	public var botplayTxt:FlxText = new FlxText();
-
-	/*
-	public static var STRUM_X = 42;
-	public static var STRUM_X_MIDDLESCROLL = -278;
-
-	public var spawnTime:Float = 1500;
-	*/
 	#end
 
 	public static var curStage:String = '';
@@ -2124,21 +2117,7 @@ class PlayState extends MusicBeatState
 	}
 
 	public inline function getTimeFromSV(time:Float, event:SpeedEvent){
-
-		// TODO: make easing SVs work somehow
-
-		//if(time >= event.songTime || event.songTime == event.startTime) // practically the same start and end time
-			return event.position + (modManager.getBaseVisPosD(time - event.songTime, 1) * event.speed);
-/* 		else{
-			// ease(easeFunc, passed, startVal, change, length)
-			// var passed = curStep - executionStep;
-			// var change = endVal - startVal;
-			if(event.startSpeed==null)event.startSpeed = currentSV.speed;
-
-			var speed = ease(FlxEase.linear, time - event.songTime, event.startSpeed, event.speed - event.startSpeed, event.songTime - event.startTime);
-			trace(speed);
-			return event.position + (modManager.getBaseVisPosD(time - event.startTime, 1) * speed);
-		} */
+		return event.position + (modManager.getBaseVisPosD(time - event.songTime, 1) * event.speed);
 	}
 
 	public function getSV(time:Float){
@@ -3750,12 +3729,14 @@ class PlayState extends MusicBeatState
 		if (callOnHScripts("onApplyNoteJudgment", [note, judgeData, bot]) == Globals.Function_Stop)
 			return null;
 
+        var judgeToMutate:Dynamic = Reflect.copy(judgeData);
+
         if (note.noteScript != null){
-			var mutatedJudgeData:Dynamic = callScript(note.noteScript, "mutateJudgeData", [note, judgeData]);
+			var mutatedJudgeData:Dynamic = callScript(note.noteScript, "mutateJudgeData", [note, judgeToMutate]);
 			if (mutatedJudgeData != null && mutatedJudgeData != Globals.Function_Continue)
-				judgeData = cast mutatedJudgeData;
+				judgeToMutate = cast mutatedJudgeData;
         }
-        var mutatedJudgeData:Dynamic = callOnHScripts("mutateJudgeData", [note, judgeData]);
+        var mutatedJudgeData:Dynamic = callOnHScripts("mutateJudgeData", [note, judgeToMutate]);
 
 		if(mutatedJudgeData != null && mutatedJudgeData != Globals.Function_Continue)
 			judgeData = cast mutatedJudgeData; // so you can return your own custom judgements or w/e

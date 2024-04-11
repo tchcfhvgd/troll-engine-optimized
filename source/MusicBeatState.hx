@@ -22,10 +22,11 @@ import scripts.FunkinHScript;
 class MusicBeatState extends FlxUIState
 {
 	#if HSCRIPT_ALLOWED
-    public var scripts:Array<FunkinHScript> = [];
+	public var hscripts:Array<FunkinHScript> = [];
     @:isVar
 	public var script(get, set):FunkinHScript;
-	inline function get_script()return scripts[0];
+	inline function get_script()
+		return hscripts[0];
 
 	public function stopScript(script:FunkinHScript, destroy:Bool = false)
 	{
@@ -43,7 +44,7 @@ class MusicBeatState extends FlxUIState
 
 	function set_script(script:FunkinHScript)
 	{
-		var oldScript = scripts.shift(); // removes the first script
+		var oldScript = hscripts.shift(); // removes the first script
 		if (oldScript != null)
 			stopScript(oldScript);
         
@@ -71,7 +72,7 @@ class MusicBeatState extends FlxUIState
 
 	override public function destroy(){
         #if HSCRIPT_ALLOWED
-        for(script in scripts)
+		for (script in hscripts)
             script.stop();
         #end
         

@@ -11,6 +11,7 @@ import openfl.display.Shader;
 import flixel.system.FlxAssets.FlxShader;
 
 class FlxSprite3D extends FlxSprite {
+    // TODO: add Quaternions to prevent gimbal lock
 	public var z:Float = 0;
 
 	public var yaw:Float = 0;
@@ -34,7 +35,6 @@ class FlxSprite3D extends FlxSprite {
 		if (dirty) // rarely
 			calcFrame(useFramePixels);
 
-        // TODO: take origin into consideration properly
 		var wid = frameWidth;
 		var hei = frameHeight;
 
@@ -45,7 +45,6 @@ class FlxSprite3D extends FlxSprite {
         var camPos = new Vector3(0, 0, 1280);
 		var camOrigin = new Vector3(FlxG.width / 2, FlxG.height / 2); // vertex origin
 
-        // TODO: take origin into account properly without this bandaid fix vv
 
         var bandaidOrigin = FlxPoint.weak();
 		bandaidOrigin.set(origin.x - halfW, origin.y - halfH);
