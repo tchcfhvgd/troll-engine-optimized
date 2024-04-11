@@ -3479,12 +3479,17 @@ class PlayState extends MusicBeatState
 	private function displayJudgment(image:String){
 		var rating:RatingSprite;
 
+
         var r:Bool = false;
-        if(hudSkinScript!=null && callScript(hudSkinScript, "onDisplayJudgment", [image]) == Globals.Function_Stop)
+        var hudDisplayJudgeRet:Dynamic = hudSkinScript == null ? Globals.Function_Continue : callScript(hudSkinScript, "onDisplayJudgment", [image]);
+		if (hudDisplayJudgeRet == Globals.Function_Stop)
             r = true;
+
+		if (hudDisplayJudgeRet is RatingSprite)
+            rating = hudDisplayJudgeRet;
         
         //trace(r);
-        if(callOnScripts("onDisplayJudgment", [image]) == Globals.Function_Stop)
+		if (callOnScripts("onDisplayJudgment", [image, hudDisplayJudgeRet]) == Globals.Function_Stop) // hudDisplayJudgeRet is returned incase the HUD skin returns a sprite or whatev
             return;
 
         if(r)return;
