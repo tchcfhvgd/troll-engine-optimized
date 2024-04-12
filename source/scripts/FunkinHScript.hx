@@ -439,6 +439,7 @@ class FunkinHScript extends FunkinScript
 class HScriptState extends MusicBeatState
 {
 	var file:String = '';
+    var stateScript:FunkinHScript;
 	public function new(fileName:String, ?additionalVars:Map<String, Any>)
 	{
 		super(false); // false because the whole point of this state is its scripted lol
@@ -474,19 +475,19 @@ class HScriptState extends MusicBeatState
 
 			trace(name);
 
-			script = FunkinHScript.fromFile(name, variables);
-			script.scriptName = fileName;
+			stateScript = FunkinHScript.fromFile(name, variables);
+			stateScript.scriptName = fileName;
 
 			break;
 		}
 
-		if (script == null){
-			script = FunkinHScript.blankScript();
+		if (stateScript == null){
+			stateScript = FunkinHScript.blankScript();
 			trace('Script file "$fileName" not found!');
 			return;
 		}
 
-		script.call("onLoad");
+		stateScript.call("onLoad");
 	}
 
 
@@ -496,17 +497,17 @@ class HScriptState extends MusicBeatState
 		// I'd love to modify HScript to add override specifically for troll engine hscript
 		// THSCript...
 
-		if(script==null){
+		if(stateScript==null){
 			FlxG.switchState(new MainMenuState(false));
 			return;
 		}
 		
 		// onCreate is used when the script is created so lol
-		if(script.call("onStateCreate", []) == Globals.Function_Stop) // idk why you'd return stop on create on a hscriptstate but.. sure
+		if(stateScript.call("onStateCreate", []) == Globals.Function_Stop) // idk why you'd return stop on create on a hscriptstate but.. sure
 			return;
 
 		super.create(); 
-		script.call("onStateCreatePost");
+		stateScript.call("onStateCreatePost");
 	}
 
 	override function update(e)
@@ -517,190 +518,190 @@ class HScriptState extends MusicBeatState
 			else
 				FlxG.switchState(new HScriptState(file));
 
-		if (script.call("onUpdate", [e]) == Globals.Function_Stop)
+		if (stateScript.call("onUpdate", [e]) == Globals.Function_Stop)
 			return;
 
 		super.update(e);
 
-		script.call("onUpdatePost", [e]);
+		stateScript.call("onUpdatePost", [e]);
 	}
 
 	override function beatHit()
 	{
-		script.call("onBeatHit");
+		stateScript.call("onBeatHit");
 		super.beatHit();
 	}
 	
 	override function stepHit()
 	{
-		script.call("onStepHit");
+		stateScript.call("onStepHit");
 		super.stepHit();
 	}
 
 	override function closeSubState()
 	{
-		if (script.call("onCloseSubState") == Globals.Function_Stop)
+		if (stateScript.call("onCloseSubState") == Globals.Function_Stop)
 			return;
 
 		super.closeSubState();
 
-		script.call("onCloseSubStatePost");
+		stateScript.call("onCloseSubStatePost");
 	}
 
 	override function onFocus()
 	{
-		if (script.call("onOnFocus") == Globals.Function_Stop)
+		if (stateScript.call("onOnFocus") == Globals.Function_Stop)
 			return;
 
 		super.onFocus();
 
-		script.call("onOnFocusPost");
+		stateScript.call("onOnFocusPost");
 	}
 	
 	override function onFocusLost()
 	{
-		if (script.call("onOnFocusLost") == Globals.Function_Stop)
+		if (stateScript.call("onOnFocusLost") == Globals.Function_Stop)
 			return;
 
 		super.onFocusLost();
 
-		script.call("onOnFocusLostPost");
+		stateScript.call("onOnFocusLostPost");
 	}
 
 	override function onResize(w:Int, h:Int)
 	{
-		if (script.call("onOnResize", [w, h]) == Globals.Function_Stop)
+		if (stateScript.call("onOnResize", [w, h]) == Globals.Function_Stop)
 			return;
 
 		super.onResize(w, h);
 
-		script.call("onOnResizePost", [w, h]);
+		stateScript.call("onOnResizePost", [w, h]);
 	}
 
 	override function openSubState(subState:FlxSubState)
 	{
-		if (script.call("onOpenSubState", [subState]) == Globals.Function_Stop)
+		if (stateScript.call("onOpenSubState", [subState]) == Globals.Function_Stop)
 			return;
 
 		super.openSubState(subState);
 
-		script.call("onOpenSubStatePost", [subState]);
+		stateScript.call("onOpenSubStatePost", [subState]);
 	}
 
 	override function resetSubState()
 	{
-		if (script.call("onResetSubState") == Globals.Function_Stop)
+		if (stateScript.call("onResetSubState") == Globals.Function_Stop)
 			return;
 
 		super.resetSubState();
 
-		script.call("onResetSubStatePost");
+		stateScript.call("onResetSubStatePost");
 	}
 
 	override function startOutro(onOutroFinished:()->Void){
 		final currentState = FlxG.state;
 
-		if (script.call("onStartOutro", [onOutroFinished]) == Globals.Function_Stop)
+		if (stateScript.call("onStartOutro", [onOutroFinished]) == Globals.Function_Stop)
 			return;
 
 		if(FlxG.state == currentState) // if "onOutroFinished" wasnt called by the func above ^ then call onOutroFinished for it
 			onOutroFinished(); // same as super.startOutro(onOutroFinished)
 
-		script.call("onStartOutroPost", []);
+		stateScript.call("onStartOutroPost", []);
 	}
 
 	static var switchToDeprecation = false;
 
 	override function switchTo(s:FlxState)
 	{
-		if(!script.exists("onSwitchTo"))
+		if(!stateScript.exists("onSwitchTo"))
 			return super.switchTo(s);
 	
 		if (!switchToDeprecation){
 			trace("switchTo is deprecated. Consider using startOutro");
 			switchToDeprecation = true;
 		}
-		if (script.call("onSwitchTo", [s]) == Globals.Function_Stop)
+		if (stateScript.call("onSwitchTo", [s]) == Globals.Function_Stop)
 			return false;
 
 		super.switchTo(s);
 
-		script.call("onSwitchToPost", [s]);
+		stateScript.call("onSwitchToPost", [s]);
 		return true;
 	}
 
 	override function transitionIn()
 	{
-		if (script.call("onTransitionIn") == Globals.Function_Stop)
+		if (stateScript.call("onTransitionIn") == Globals.Function_Stop)
 			return;
 
 		super.transitionIn();
 
-		script.call("onTransitionInPost");
+		stateScript.call("onTransitionInPost");
 	}
 
 	override function transitionOut(?onExit: ()->Void)
 	{
-		if (script.call("onTransitionOut", [onExit]) == Globals.Function_Stop)
+		if (stateScript.call("onTransitionOut", [onExit]) == Globals.Function_Stop)
 			return;
 
 		super.transitionOut(onExit);
 
-		script.call("onTransitionOutPost", [onExit]);
+		stateScript.call("onTransitionOutPost", [onExit]);
 	}
 
 	override function draw()
 	{
-		if (script.call("onDraw", []) == Globals.Function_Stop)
+		if (stateScript.call("onDraw", []) == Globals.Function_Stop)
 			return;
 
 		super.draw();
 
-		script.call("onDrawPost", []);
+		stateScript.call("onDrawPost", []);
 	}
 
 	override function destroy()
 	{
-		if (script.call("onDestroy", []) == Globals.Function_Stop)
+		if (stateScript.call("onDestroy", []) == Globals.Function_Stop)
 			return;
 
 		super.destroy();
 
-		script.call("onDestroyPost", []);
+		stateScript.call("onDestroyPost", []);
 	}
 
 
 	// idk sometimes you wanna override add/remove
 	override function add(member:FlxBasic):FlxBasic
 	{
-		if (script.call("onAdd", [member], []) == Globals.Function_Stop)
+		if (stateScript.call("onAdd", [member], []) == Globals.Function_Stop)
 			return member;
 
 		super.add(member);
 
-		script.call("onAddPost", [member]);
+		stateScript.call("onAddPost", [member]);
 		return member;
 	}
 
 	override function remove(member:FlxBasic, splice:Bool = false):FlxBasic
 	{
-		if (script.call("onRemove", [member, splice]) == Globals.Function_Stop)
+		if (stateScript.call("onRemove", [member, splice]) == Globals.Function_Stop)
 			return member;
 
 		super.remove(member, splice);
 
-		script.call("onRemovePost", [member, splice]);
+		stateScript.call("onRemovePost", [member, splice]);
 		return member;
 	}
 
 	override function insert(position:Int, member:FlxBasic):FlxBasic
 	{
-		if (script.call("onInsert", [position, member]) == Globals.Function_Stop)
+		if (stateScript.call("onInsert", [position, member]) == Globals.Function_Stop)
 			return member;
 
 		super.insert(position, member);
 
-		script.call("onInsertPost", [position, member]);
+		stateScript.call("onInsertPost", [position, member]);
 
 		return member;
 	}
