@@ -802,6 +802,8 @@ class PlayState extends MusicBeatState
 		splash.alpha = 0.0;
 		grpNoteSplashes.add(splash);
 
+        callOnHScripts("onCharacterCreation");
+
 		//// Characters
 
 		var gfVersion:String = SONG.gfVersion;
@@ -851,6 +853,8 @@ class PlayState extends MusicBeatState
 				gf.visible = false;
 		}
 
+
+        callOnHScripts("onCharacterCreationPost");
 		////
 		stage.buildStage();
 

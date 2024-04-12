@@ -256,7 +256,7 @@ class CharacterEditorState extends MusicBeatState
 	var testMode:Bool = false;
 	var onPixelBG:Bool = false;
 	function reloadBGs() {
-		FlxG.camera.bgColor = onPixelBG ? FlxColor.BLACK : FlxColor.WHITE;
+		FlxG.camera.bgColor = onPixelBG ? FlxColor.BLACK : FlxColor.GRAY;
 
 		/*
 		var i:Int = bgLayer.members.length-1;

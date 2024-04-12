@@ -92,10 +92,10 @@ class PauseSubState extends MusicBeatSubstate
 			},
 			"Leave Charting Mode" => () ->
 			{
-				var chartPostfix = PlayState.difficultyName;
+/* 				var chartPostfix = PlayState.difficultyName;
 				if (chartPostfix != "")
 					chartPostfix = '-$chartPostfix';
-				PlayState.SONG = Song.loadFromJson(PlayState.SONG.song + chartPostfix, PlayState.SONG.song);
+				PlayState.SONG = Song.loadFromJson(PlayState.SONG.song + chartPostfix, PlayState.SONG.song); */
 				PlayState.chartingMode = false;
 				restartSong();
 			},
