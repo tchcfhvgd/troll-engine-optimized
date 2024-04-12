@@ -575,7 +575,6 @@ class Macro {
                     );
                     
                         
-					trace(multipleScripts, className);
                     if(multipleScripts){
 						body.push(macro
                         {

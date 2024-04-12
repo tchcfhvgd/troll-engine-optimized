@@ -1,14 +1,13 @@
 {
-    "mod": {
-        "name": "Test Mod",
-        "description": "A mod for testing TE Content Format V3",
-        "version": "1.0.0",
-        "credits": {
-            "nebulazorua": "Made the thing"
-        },
-        "requires_restart": false,
-        "dependencies": {},
-        "engine_version": ">=0.2.0",
-        "content_format": 3
-    }   
+    "name": "Test Mod",
+    "description": "A mod for testing TE Content Format V3",
+    "version": "1.0.0",
+    "credits": [
+        ["nebulazorua", "made the thing", "https://www.twitter.com", "face"]
+    ],
+    "requires_restart": false,
+    "dependencies": {},
+    "engine_version": ">=0.2.0",
+    "content_format": 3
+      
 }
