@@ -238,13 +238,14 @@ class Paths
 
 	#else
 
+	/** Iterates through a directory and call a function with the name of each file contained within it**/
 	inline static public function iterateDirectory(Directory:String, Func):Bool
 	{
 		if (!FileSystem.exists(Directory) || !FileSystem.isDirectory(Directory))
 			return false;
 		
-		for (i in FileSystem.readDirectory(Directory))
-			Func(i);
+		for (name in FileSystem.readDirectory(Directory))
+			Func(name);
 
 		return true;
 	}
@@ -607,6 +608,17 @@ class Paths
 		#end
 
 		return getContent(Paths.getPreloadPath(key));
+	}
+
+	static public function getJson(path:String):Null<Dynamic>
+	{
+		try{
+			return Json.parse(Paths.getContent(path));
+		}catch(e){
+			Sys.println('$path: $e');
+		}
+
+		return null;
 	}
 
 	public static var modsList:Array<String> = [];

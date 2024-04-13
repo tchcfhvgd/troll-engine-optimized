@@ -234,7 +234,7 @@ class ModManager {
 		return getCMod(dir, player, songSpeed) * getXMod(dir, player);
 	
 	inline public function getNoteSpeed(note:Note, pN:Int, ?songSpeed:Float)
-		return getCMod(note.noteData, pN, songSpeed) * note.multSpeed * getXMod(note.noteData, pN);
+		return getCMod(note.column, pN, songSpeed) * note.multSpeed * getXMod(note.column, pN);
 	
 
 	public function getActiveMods(pN:Int){
@@ -428,6 +428,7 @@ class ModManager {
 
  	public var playerAmount:Int = 2;
 	public var playerOOBIsCentered:Bool = true; // Player Out of Bounds is centered
+	public var vPadding:Float = 45;
 
 	public function getBaseX(direction:Int, player:Float, receptorAmount:Int = 4):Float
 	{

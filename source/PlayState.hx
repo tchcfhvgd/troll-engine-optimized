@@ -355,6 +355,7 @@ class PlayState extends MusicBeatState
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
 
+	/** Formatted song name **/
 	public var songName:String = "";
 	public var songHighscore:Int = 0;
 	public var songLength:Float = 0;
@@ -568,8 +569,10 @@ class PlayState extends MusicBeatState
 
 		////
         
-		if (SONG == null)
+		if (SONG == null){
+			trace("null SONG");
 			SONG = Song.loadFromJson('tutorial', 'tutorial');
+		}
 
 		//if (SONG.hudSkin != null)
         	hudSkin = SONG.hudSkin;
@@ -583,21 +586,19 @@ class PlayState extends MusicBeatState
 		songName = Paths.formatToSongPath(SONG.song);
 		songHighscore = Highscore.getScore(SONG.song);
 
-		if (SONG != null){
-			if(SONG.metadata != null)
-				metadata = SONG.metadata;
+		if(SONG.metadata != null)
+			metadata = SONG.metadata;
+		else{
+			var jsonPath:String = Paths.modsSongJson('$songName/metadata');
+
+			if (!Paths.exists(jsonPath))
+				jsonPath = Paths.songJson('$songName/metadata');
+
+			if (Paths.exists(jsonPath))
+				metadata = cast Json.parse(Paths.getContent(jsonPath));
 			else{
-				var jason = Paths.songJson(songName + '/metadata');
-
-				if (!Paths.exists(jason))
-					jason = Paths.modsSongJson(songName + '/metadata');
-
-				if (Paths.exists(jason))
-					metadata = cast Json.parse(Paths.getContent(jason));
-				else{
-					if(showDebugTraces)
-						trace("No metadata for " + songName + ". Maybe add some?");
-				}
+				if(showDebugTraces)
+					trace('No metadata for $songName. Maybe add some?');
 			}
 		}
 
@@ -1981,7 +1982,7 @@ class PlayState extends MusicBeatState
 			for (songNotes in section.sectionNotes)
 			{
 				var daStrumTime:Float = songNotes[0];
-				var daNoteData:Int = Std.int(songNotes[1] % 4);
+				var daColumn:Int = Std.int(songNotes[1] % 4);
 
 				var gottaHitNote:Bool = section.mustHitSection;
 
@@ -2001,8 +2002,8 @@ class PlayState extends MusicBeatState
 				if (Std.isOfType(type, Int)) // Backward compatibility + compatibility with Week 7 charts;
 					type = editors.ChartingState.noteTypeList[type]; 
 				
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, gottaHitNote, false, false, hudSkin);
-				swagNote.realNoteData = songNotes[1];
+				var swagNote:Note = new Note(daStrumTime, daColumn, oldNote, gottaHitNote, false, false, hudSkin);
+				swagNote.realColumn = songNotes[1];
 				swagNote.sustainLength = songNotes[2];
                 
 				swagNote.gfNote = (section.gfSection && (songNotes[1]<4));
@@ -2040,7 +2041,7 @@ class PlayState extends MusicBeatState
 
 				for (susNote in 0...Math.floor(swagNote.sustainLength / Conductor.stepCrochet))
 				{
-					var sustainNote:Note = new Note(daStrumTime + Conductor.stepCrochet * (susNote + 1), daNoteData, oldNote, gottaHitNote, true, false, hudSkin);
+					var sustainNote:Note = new Note(daStrumTime + Conductor.stepCrochet * (susNote + 1), daColumn, oldNote, gottaHitNote, true, false, hudSkin);
 					sustainNote.gfNote = swagNote.gfNote;
 					callOnScripts("onGeneratedHold", [sustainNote]);
 					sustainNote.noteType = type;
@@ -2309,10 +2310,10 @@ class PlayState extends MusicBeatState
 	}
 
 	override function draw(){
-        if(!(subState is GameOverSubstate))
-		    camStageUnderlay.bgColor.alphaFloat = ClientPrefs.stageOpacity;
-        else
-            camStageUnderlay.bgColor.alphaFloat = 0;
+		if((subState is GameOverSubstate))
+			camStageUnderlay.bgColor.alphaFloat = 0;
+		else
+			camStageUnderlay.bgColor.alphaFloat = ClientPrefs.stageOpacity;
 
         var ret:Dynamic = callOnScripts('onStateDraw');
 		if(ret != Globals.Function_Stop) 
@@ -2420,7 +2421,7 @@ class PlayState extends MusicBeatState
 
 
 			#if discord_rpc
-			if (startTimer != null && startTimer.finished)
+			if (Conductor.songPosition > 0.0)
 			{
 				DiscordClient.changePresence(detailsText, SONG.song, songName, true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
 			}
@@ -2495,7 +2496,7 @@ class PlayState extends MusicBeatState
 			#if LUA_ALLOWED
 			callOnLuas('onSpawnNote', [
 				allNotes.indexOf(dunceNote),
-				dunceNote.noteData,
+				dunceNote.column,
 				dunceNote.noteType,
 				dunceNote.isSustainNote,
 				dunceNote.strumTime
@@ -2750,9 +2751,7 @@ class PlayState extends MusicBeatState
 
 		if (generatedMusic)
 		{
-			if (!inCutscene){
-				keyShit();
-			}
+			keyShit();
 
 			for(field in playfields)
 			{
@@ -3708,7 +3707,6 @@ class PlayState extends MusicBeatState
 			else if (stats.judgements.get("epic") > 0)
 				comboColor = hud.judgeColours.get("epic");
 		}
-        
 
         if(hudSkinScript!=null)callScript(hudSkinScript, "onApplyJudgmentDataPost", [judgeData, diff, bot, show]);
         callOnScripts("onApplyJudgmentDataPost", [judgeData, diff, bot, show]);
@@ -3818,7 +3816,7 @@ class PlayState extends MusicBeatState
 
 	private function onKeyPress(event:KeyboardEvent):Void
 	{
-		if (paused || !startedCountdown)
+		if (paused || !startedCountdown || inCutscene)
 			return;
 
 		var eventKey:FlxKey = event.keyCode;
@@ -3921,6 +3919,9 @@ class PlayState extends MusicBeatState
 
 	private function keyShit():Void
 	{
+		if (inCutscene) return;
+
+
 		// HOLDING
 		var parsedHoldArray:Array<Bool> = parseKeys();
 		pressedGameplayKeys = parsedHoldArray;
@@ -3994,7 +3995,7 @@ class PlayState extends MusicBeatState
 			if(!note.alive || daNote.tail.contains(note) || note.isSustainNote) 
 				continue;
 
-			if (daNote != note && field.isPlayer && daNote.noteData == note.noteData && Math.abs(daNote.strumTime - note.strumTime) < 1) 
+			if (daNote != note && field.isPlayer && daNote.column == note.column && Math.abs(daNote.strumTime - note.strumTime) < 1) 
 				field.removeNote(note);
 		}
 
@@ -4037,7 +4038,7 @@ class PlayState extends MusicBeatState
 				if(char != null && char.animTimer <= 0 && !char.voicelining)
 				{
 					var daAlt = (daNote.noteType == 'Alt Animation') ? '-alt' : '';
-					var animToPlay:String = singAnimations[Std.int(Math.abs(daNote.noteData))] + daAlt + 'miss';
+					var animToPlay:String = singAnimations[Std.int(Math.abs(daNote.column))] + daAlt + 'miss';
 
 					char.playAnim(animToPlay, true);
 
@@ -4067,7 +4068,7 @@ class PlayState extends MusicBeatState
 		////
 		callOnHScripts("noteMiss", [daNote, field]);
 		#if LUA_ALLOWED
-		callOnLuas('noteMiss', [notes.members.indexOf(daNote), daNote.noteData, daNote.noteType, daNote.isSustainNote, daNote.ID]);
+		callOnLuas('noteMiss', [notes.members.indexOf(daNote), daNote.column, daNote.noteType, daNote.isSustainNote, daNote.ID]);
 		#end
 		if (daNote.noteScript != null)
 			callScript(daNote.noteScript, "noteMiss", [daNote, field]);
@@ -4146,7 +4147,7 @@ class PlayState extends MusicBeatState
 			} 
 			else if(!note.noAnimation) 
 			{
-				var animToPlay:String = singAnimations[Std.int(Math.abs(note.noteData))];
+				var animToPlay:String = singAnimations[Std.int(Math.abs(note.column))];
 
 				var curSection = SONG.notes[curSection];
 				if ((curSection != null && curSection.altAnim) || note.noteType == 'Alt Animation')
@@ -4169,7 +4170,7 @@ class PlayState extends MusicBeatState
 			if (note.isSustainNote && !note.isSustainEnd)
 				time += 0.15;
 
-			StrumPlayAnim(field, Std.int(Math.abs(note.noteData)) % 4, time, note);
+			StrumPlayAnim(field, Std.int(Math.abs(note.column)) % 4, time, note);
 		}
 
 		// Script shit
@@ -4178,7 +4179,7 @@ class PlayState extends MusicBeatState
 			callScript(note.noteScript, "opponentNoteHit", [note, field]);	
 		
 		#if LUA_ALLOWED
-		callOnLuas('opponentNoteHit', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote, note.ID]);
+		callOnLuas('opponentNoteHit', [notes.members.indexOf(note), Math.abs(note.column), note.noteType, note.isSustainNote, note.ID]);
 		#end
 
 		if (!note.isSustainNote)
@@ -4285,7 +4286,7 @@ class PlayState extends MusicBeatState
 			} 
 			else if(!note.noAnimation) 
 			{
-				var animToPlay:String = singAnimations[Std.int(Math.abs(note.noteData))];
+				var animToPlay:String = singAnimations[Std.int(Math.abs(note.column))];
 
 				var curSection = SONG.notes[curSection];
 				if ((curSection != null && curSection.altAnim) || note.noteType == 'Alt Animation')
@@ -4310,10 +4311,10 @@ class PlayState extends MusicBeatState
 				if (note.isSustainNote && !note.isSustainEnd)
 					time += 0.15;
 
-				StrumPlayAnim(field, Std.int(Math.abs(note.noteData)) % 4, time, note);
+				StrumPlayAnim(field, Std.int(Math.abs(note.column)) % 4, time, note);
 			}else{
-				var spr = field.strumNotes[note.noteData];
-				if (spr != null && field.keysPressed[note.noteData])
+				var spr = field.strumNotes[note.column];
+				if (spr != null && field.keysPressed[note.column])
 					spr.playAnim('confirm', true, note);
 			}
 		}
@@ -4324,7 +4325,7 @@ class PlayState extends MusicBeatState
 			callScript(note.noteScript, "goodNoteHit", [note, field]);
 
 		#if LUA_ALLOWED
-		callOnLuas('goodNoteHit', [notes.members.indexOf(note), Math.round(Math.abs(note.noteData)), note.noteType, note.isSustainNote, note.ID]);
+		callOnLuas('goodNoteHit', [notes.members.indexOf(note), Math.round(Math.abs(note.column)), note.noteType, note.isSustainNote, note.ID]);
 		#end
 		
 		if (!note.isSustainNote && note.tail.length == 0)
@@ -4353,7 +4354,7 @@ class PlayState extends MusicBeatState
 			if(field==null)
 				field = getFieldFromNote(note);
 
-			var strum:StrumNote = field.strumNotes[note.noteData];
+			var strum:StrumNote = field.strumNotes[note.column];
 			if(strum != null) {
 				field.spawnSplash(note, splashSkin);
 			}
