@@ -1541,6 +1541,7 @@ class ChartingState extends MusicBeatState
 		}
 		
 		vocals = new FlxSound();
+		vocals.context = MUSIC;
 
 		var file:Dynamic = Paths.voices(currentSongName);
 		if (Std.isOfType(file, Sound) || OpenFlAssets.exists(file)) {
@@ -1553,7 +1554,7 @@ class ChartingState extends MusicBeatState
 			vocals = null;
 		}
 
-		FlxG.sound.playMusic(Paths.inst(currentSongName), 0.6/*, false*/);
+		FlxG.sound.playMusic(Paths.inst(currentSongName), 0.6 /*, false*/);
 		soundTracksMap.set("Inst", FlxG.sound.music);
 
 		/*
@@ -2260,7 +2261,7 @@ class ChartingState extends MusicBeatState
 			var metroInterval:Float = 60 / metronomeStepper.value;
 			var metroStep:Int = Math.floor(((Conductor.songPosition + metronomeOffsetStepper.value) / metroInterval) / 1000);
 			var lastMetroStep:Int = Math.floor(((lastConductorPos + metronomeOffsetStepper.value) / metroInterval) / 1000);
-			if(metroStep != lastMetroStep) {
+			if(metroStep != lastMetroStep) { // this should be rewritten to be in sync w/ some shit like playScheduled but not really since we dont have that in flixel
 				FlxG.sound.play(Paths.sound('Metronome_Tick'));
 				//trace('Ticked');
 			}

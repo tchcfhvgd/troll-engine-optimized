@@ -127,6 +127,46 @@ class ClientPrefs
 					"type" => "percent" // saved value is value / 100
 				]
 			},
+			"songVolume" => {
+				display: "Music Volume",
+				desc: "The volume of music.",
+				type: Number,
+				value: 1,
+				data: [
+					"suffix" => "%",
+					"min" => 0,
+					"max" => 100,
+					"step" => 1,
+					"type" => "percent" // saved value is value / 100
+				]
+			},
+			"masterVolume" => {
+				display: "Master Volume",
+				desc: "The volume of the game.",
+				type: Number,
+				value: 1,
+				data: [
+					"suffix" => "%",
+					"min" => 0,
+					"max" => 100,
+					"step" => 1,
+					"type" => "percent" // saved value is value / 100
+				]
+			},
+			"sfxVolume" => {
+				display: "SFX Volume",
+				desc: "The volume of the sound effects.",
+				type: Number,
+				value: 1,
+				data: [
+					"suffix" => "%",
+					"min" => 0,
+					"max" => 100,
+					"step" => 1,
+					"type" => "percent" // saved value is value / 100
+				]
+			},
+
 			"flashing" => {
 				display: "Flashing Lights",
 				desc: "When toggled, flashing lights will be shown ingame.",
@@ -512,6 +552,7 @@ class ClientPrefs
 				value: true,
 				data: []
 			},
+			#if tgt
 			"ruin" => {
 				display: "Ruin The Mod",
 				desc: "Makes the mod really good! improves the mod alot!! the name is a joke guys it makes the mod REALLY REALLY good its not blammed lights i swear",
@@ -519,6 +560,7 @@ class ClientPrefs
 				value: false,
 				data: []
 			},
+			#end
 			"customizeKeybinds" => {
 				display: "Customize Key Bindings",
 				desc: "Lets you change your controls. Pretty straight forward, huh?",
@@ -609,6 +651,8 @@ class ClientPrefs
 		-260, -80,
 		 0, 0
 	];
+
+    public static var locale:String = 'en-us';
 
 	// I'd like to rewrite the whole Controls.hx thing tbh
 	// I think its shitty and can stand a rewrite but w/e

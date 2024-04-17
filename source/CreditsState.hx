@@ -235,7 +235,7 @@ class CreditsState extends MusicBeatState
 	function updateSelection(playSound:Bool = true)
 	{
 		if (playSound)
-			FlxG.sound.play(Paths.sound("scrollMenu"), 0.4);
+			FlxG.sound.play(Paths.sound("scrollMenu"), 0.4 );
 
 		// selectedSong = titleArray[curSelected];
 
@@ -303,8 +303,12 @@ class CreditsState extends MusicBeatState
 	var controlLock:Bool = false;
 	override function update(elapsed:Float)
 	{
-		if (FlxG.sound.music != null && FlxG.sound.music.volume < 0.7)
+		var targetVolume:Float =  0.7;
+		if (FlxG.sound.music != null && FlxG.sound.music.volume < targetVolume)
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
+
+		if (FlxG.sound.music.volume > targetVolume)
+			FlxG.sound.music.volume = targetVolume;
 
 		//// update camera
 		var farAwaySpeedup = 0.002 * Math.max(0, Math.abs(camFollowPos.y - camFollow.y) - 360);

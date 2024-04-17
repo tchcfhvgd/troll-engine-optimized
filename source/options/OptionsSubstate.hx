@@ -51,6 +51,7 @@ class OptionsSubstate extends MusicBeatSubstate
 		"judgeDiff", 
 		"noteSkin",
 	];
+	var forceWidgetUpdate:Bool = false;
 
 	static public var requiresRestart = _requiresRestart.copy();
 	static public var recommendsRestart = _recommendsRestart.copy();
@@ -238,6 +239,7 @@ class OptionsSubstate extends MusicBeatSubstate
 	function playPreviewSound(name:String, volume:Float = 1){
 		if (previewSound != null) previewSound.stop().destroy();
 		previewSound = FlxG.sound.play(Paths.sound(name), volume, false, null, true, ()->{previewSound = null;});
+		previewSound.context = MISC;
 	}
 
 	function onNumberChanged(option:String, oldVal:Float, newVal:Float)
@@ -255,9 +257,19 @@ class OptionsSubstate extends MusicBeatSubstate
 			case 'epicWindow' | 'sickWindow' | 'goodWindow' | 'badWindow' | 'hitWindow':
 				checkWindows();
 			case 'hitsoundVolume':
-				playPreviewSound("hitsound", newVal / 100);
+				playPreviewSound("hitsound", newVal * 0.01);
+            case 'sfxVolume':
+				playPreviewSound("scrollMenu", newVal * 0.01);
+            case 'masterVolume':
+                var vol = FlxG.sound.volume;
+                var newVol = newVal * 0.01;
+                if(vol != newVol)FlxG.sound.volume = newVol;
+
+                // TODO: only show sound tray if it would go up/down a step (so prob just check if newVol / 10 is a whole number or sum shit)
+				//FlxG.sound.showSoundTray(vol < newVol);
+
 			case 'missVolume':
-				playPreviewSound('missnote${FlxG.random.int(1, 3)}', newVal / 100);
+				playPreviewSound('missnote${FlxG.random.int(1, 3)}', newVal * 0.01);
 		}
 	}
 
@@ -294,9 +306,12 @@ class OptionsSubstate extends MusicBeatSubstate
 			[
 				"audio", 
 				[
-					"ruin",
+                    "masterVolume",
+                    "songVolume",
+				    'sfxVolume',
 					"hitsoundVolume", 
-					"missVolume"
+					"missVolume",
+					#if tgt "ruin", #end
 				]
 			],
 			[
@@ -392,6 +407,7 @@ class OptionsSubstate extends MusicBeatSubstate
         ],
 		
 		"misc" => [
+			//["audio", ["masterVolume", "songVolume", "hitsoundVolume", "missVolume"]],
 			#if discord_rpc
 			["discord", ["discordRPC"]],
 			#end
@@ -417,7 +433,7 @@ class OptionsSubstate extends MusicBeatSubstate
 		"ui",
 		"video",
 		"controls",
-		#if (discord_rpc || DO_AUTO_UPDATE) "misc", #end /* "Accessibility" */];
+		#if (discord_rpc || DO_AUTO_UPDATE) "misc" #end, /* "Accessibility" */];
 
 	var selected:Int = 0;
 
@@ -473,10 +489,19 @@ class OptionsSubstate extends MusicBeatSubstate
 	}
 
 	var whitePixel = FlxGraphic.fromRectangle(1, 1, 0xFFFFFFFF, false, 'whitePixel');
+    function onVolumeChange(vol:Float){
+        vol *= 100;
+		if (Math.floor(getNumber("masterVolume")) != Math.floor(vol)){
+			forceWidgetUpdate = true;
+            changeNumber("masterVolume", vol, true);
+        }
+    }
+
 	override function create()
 	{
 		//var startTime = Sys.cpuTime();
 		// ClientPrefs.load();
+		Main.volumeChangedEvent.add(onVolumeChange);
 		persistentDraw = true;
 		persistentUpdate = true;
 
@@ -540,24 +565,31 @@ class OptionsSubstate extends MusicBeatSubstate
 
 		optionCamera.follow(camFollowPos);
 
+		////
+		final backdropGraphic = Paths.image("optionsMenu/backdrop");
+		final backdropSlice = [22, 22, 89, 89];
+		final tabButtonHeight = 44;
+
 		var lastX:Float = optionMenu.x;
 		for (idx in 0...optionOrder.length)
 		{
 			var tabName = optionOrder[idx];
 
-			var button = new FlxSprite(lastX, optionMenu.y - 3, whitePixel);
-			button.ID = idx;
-			button.color = idx == 0 ? FlxColor.fromRGB(128, 128, 128) : FlxColor.fromRGB(82, 82, 82);
-			button.alpha = 0.75;
-
-			var text = new FlxText(button.x, button.y, 0, Paths.getString('opt_tabName_$tabName').toUpperCase(), 16);
+			var text = new FlxText(0, 0, 0, Paths.getString('opt_tabName_$tabName').toUpperCase(), 16);
 			text.setFormat(Paths.font(#if tgt "calibrib.ttf" #else "vcr.ttf" #end), 32, 0xFFFFFFFF, FlxTextAlign.CENTER);
-			
-			button.scale.set(Math.max(86, text.fieldWidth) + 8, 44);
-			button.updateHitbox();
-			button.y -= button.height;
 
-			text.y = button.y + ((button.height - text.height) / 2);
+			var button = new FlxSprite(lastX, optionMenu.y - 3 - tabButtonHeight, whitePixel);
+			button.ID = idx;
+			button.alpha = 0.75;
+			button.color = idx == 0 ? FlxColor.fromRGB(128, 128, 128) : FlxColor.fromRGB(82, 82, 82);
+			
+			button.scale.set(Math.max(86, text.fieldWidth) + 8, tabButtonHeight);
+			button.updateHitbox();
+
+			text.setPosition(
+				button.x,
+				button.y + ((button.height - text.height) / 2)
+			);
 			text.fieldWidth = button.width;
 			text.updateHitbox();
 
@@ -571,9 +603,6 @@ class OptionsSubstate extends MusicBeatSubstate
 			var group = new FlxTypedGroup<FlxObject>();
 			var widgets:Map<FlxObject, Widget> = [];
 			cameraPositions.push(FlxPoint.get());
-
-			var backdropGraphic = Paths.image("optionsMenu/backdrop");
-			var backdropSlice = [22, 22, 89, 89];
 
 			for (data in options.get(tabName))
 			{
@@ -593,8 +622,8 @@ class OptionsSubstate extends MusicBeatSubstate
 					var data:OptionData = actualOptions.get(opt);
 
 					data.data.set("optionName", opt);
-					data.display = Paths.getString('opt_display_$opt');
-					data.desc = Paths.getString('opt_desc_$opt');
+					if (Paths.hasString('opt_display_$opt'))data.display = Paths.getString('opt_display_$opt');
+					if (Paths.hasString('opt_desc_$opt'))data.desc = Paths.getString('opt_desc_$opt');
 
 					var text = new FlxText(16, daY, 0, data.display, 16);
 					text.setFormat(Paths.font("calibri.ttf"), 28, 0xFFFFFFFF, FlxTextAlign.LEFT);
@@ -687,7 +716,7 @@ class OptionsSubstate extends MusicBeatSubstate
 		{
 			case Toggle:
 				var checkbox = new Checkbox();
-				checkbox.scale.set(0.65, 0.65);
+				checkbox.setGraphicSize(36, 36);
 				checkbox.updateHitbox();
 				var text = new FlxText(0, 0, 0, "off", 16);
 				text.setFormat(Paths.font("calibri.ttf"), 24, 0xFFFFFFFF, FlxTextAlign.LEFT);
@@ -1522,7 +1551,7 @@ class OptionsSubstate extends MusicBeatSubstate
 			prevScreenX = FlxG.mouse.screenX;
 			prevScreenY = FlxG.mouse.screenY;
 
-			if (pHov == null || doUpdate || movedMouse || FlxG.mouse.justPressed)
+			if (pHov == null || doUpdate || movedMouse || FlxG.mouse.justPressed || forceWidgetUpdate)
 			{
 				for (object => widget in currentWidgets)
 				{
@@ -1535,6 +1564,7 @@ class OptionsSubstate extends MusicBeatSubstate
 
 					updateWidget(object, widget, elapsed);
 				}
+				forceWidgetUpdate = false;
 			}
 
 			if (curWidget == null){
@@ -1606,6 +1636,7 @@ class OptionsSubstate extends MusicBeatSubstate
 	{
 		_point.put();
 		_mousePoint.put();
+		Main.volumeChangedEvent.remove(onVolumeChange);
 
 		for (val in cameraPositions)
 			val.put();
@@ -1718,11 +1749,11 @@ class Checkbox extends WidgetSprite
 	{
 		super(x, y);
 		frames = Paths.getSparrowAtlas("optionsMenu/checkbox");
-		animation.addByPrefix("toggled", "selected", 0, true);
-		animation.addByPrefix("idle", "deselected", 0, true);
+		animation.addByPrefix("toggled", "selected", 0, false);
+		animation.addByPrefix("idle", "deselected", 0, false);
 		animation.play("idle", true);
 
-		antialiasing = false;
+		// antialiasing = false;
 
 		toggled = defaultToggled;
 	}

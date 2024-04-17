@@ -66,9 +66,9 @@ class GameOverSubstate extends MusicBeatSubstate
 
 			var frameRate = 1/24;
 			FlxTween.tween(genericBitch, {"scale.x": 1.22, "scale.y": 1.22, alpha: 1}, 1, {ease: FlxEase.circIn}).then(
-				FlxTween.tween(genericBitch, {"scale.x": 1.196, "scale.y": 1.196}, frameRate, {onComplete: (_)->{ if (!isEnding) FlxG.sound.play(Paths.sound(genericSound), 1, false);}})).then(
+				FlxTween.tween(genericBitch, {"scale.x": 1.196, "scale.y": 1.196}, frameRate, {onComplete: (_)->{ if (!isEnding) FlxG.sound.play(Paths.sound(genericSound), false);}})).then(
 					FlxTween.tween(genericBitch, {"scale.x": 1.1, "scale.y": 1.1}, frameRate*35)).then(
-						FlxTween.tween(genericBitch, {"scale.x": 1, "scale.y": 1}, frameRate*60, {onStart: (fuck)->{ if (!isEnding) FlxG.sound.playMusic(Paths.music(genericMusic), 0.6, true); FlxG.sound.music.fadeIn(0.4, 0.6, 1);}})).then(
+						FlxTween.tween(genericBitch, {"scale.x": 1, "scale.y": 1}, frameRate*60, {onStart: (fuck)->{ if (!isEnding) FlxG.sound.playMusic(Paths.music(genericMusic), 0.6 , true); FlxG.sound.music.fadeIn(0.4, 0.6, 1);}})).then(
 							FlxTween.tween(genericBitch, {"scale.x": 1.01, "scale.y": 1.01}, frameRate * 14, {type: PINGPONG}));
 		}
 		else{

@@ -38,12 +38,13 @@ class Main extends Sprite
 
 	// You can pretty much ignore everything from here on - your code should go in your states.
 
+	public static var volumeChangedEvent:lime.app.Event<Float->Void> = new lime.app.Event<Float->Void>();
 	public static var engineVersion:String = '0.2.0'; // Used for autoupdating n stuff
 	public static var betaVersion(get, default):String = 'rc.1'; // beta version, make blank if not on a beta version, otherwise do it based on semantic versioning (alpha.1, beta.1, rc.1, etc)
 	public static var beta:Bool = betaVersion.trim() != '';
 
 	public static var UserAgent:String = 'TrollEngine/${Main.engineVersion}'; // used for http requests. if you end up forking the engine and making your own then make sure to change this!!
-	public static var githubRepo = Github.getCompiledRepoInfo();
+	public static var githubRepo:RepoInfo = Github.getCompiledRepoInfo();
 	public static var downloadBetas:Bool = beta;
 	public static var outOfDate:Bool = false;
 	public static var recentRelease:Release;
@@ -53,10 +54,15 @@ class Main extends Sprite
 	static function get_betaVersion()
 		return beta ? betaVersion : "0";
 
+    @:isVar
+    public static var semanticVersion(get, null):SemanticVersion = '';
+	static function get_semanticVersion()
+		return '$engineVersion${beta ? '-$betaVersion' : ""}';
+
 	@:isVar
 	public static var displayedVersion(get, null):String = '';
 	static function get_displayedVersion()
-		return 'v$engineVersion${beta ? '-$betaVersion' : ""}';
+		return 'v${semanticVersion}';
 	    
 	////
 	public static var fpsVar:FPS;
@@ -169,7 +175,7 @@ class Main extends Sprite
 		}
 		
 		addChild(new FNFGame(gameWidth, gameHeight, initialState, #if(flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen));
-		
+
 		FlxG.mouse.useSystemCursor = true;
 		FlxG.mouse.visible = false;
 

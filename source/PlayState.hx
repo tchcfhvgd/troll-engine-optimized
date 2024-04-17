@@ -524,14 +524,16 @@ class PlayState extends MusicBeatState
 		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
 		disableModcharts = !ClientPrefs.modcharts; //ClientPrefs.getGameplaySetting('disableModcharts', false);
 		midScroll = ClientPrefs.midScroll;
+        #if tgt
 		playbackRate *= (ClientPrefs.ruin ? 0.8 : 1);
+        #end
 		FlxG.timeScale = playbackRate;
 		
 		if(perfectMode){
 			practiceMode = false;
 			instakillOnMiss = true;
 		}
-		saveScore = !cpuControlled;
+		saveScore = true; //!cpuControlled;
 		healthDrain = switch(ClientPrefs.getGameplaySetting('healthDrain', "Disabled")){
 			default: 0;
 			case "Basic": 0.00055;
@@ -1415,7 +1417,6 @@ class PlayState extends MusicBeatState
 
 		for(field in playfields.members)
 			field.fadeIn(isStoryMode || skipArrowStartTween); // TODO: check if its the first song so it should fade the notes in on song 1 of story mode
-		modManager.receptors = [playerField.strumNotes, dadField.strumNotes];
 
 		callOnScripts('preModifierRegister'); // deprecated
 		callOnScripts('onModifierRegister');
@@ -1538,11 +1539,12 @@ class PlayState extends MusicBeatState
                 if(ret == Globals.Function_Continue){
                     // default behaviour
                     var snd:FlxSound = null; 
-                    snd = FlxG.sound.play(Paths.sound(soundName + introSoundsSuffix), 0.6, false, null, true, ()->{
+					snd = FlxG.sound.play(Paths.sound(soundName + introSoundsSuffix), 0.6 , false, null, true, ()->{
                         if (countdownSnd == snd) countdownSnd = null;
                     });
+                    #if tgt
                     snd.effect = ClientPrefs.ruin ? sndEffect : null;
-                    
+                    #end
                     countdownSnd = snd;
                 }
 			}
@@ -1797,8 +1799,10 @@ class PlayState extends MusicBeatState
 		Conductor.changeBPM(PlayState.SONG.bpm);
 
 		inst = new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song));
+        inst.context = MUSIC;
 		inst.volume = 0;
 		vocals = new FlxSound();
+        vocals.context = MUSIC;
 		vocals.volume = 0;
 
 		if (SONG.needsVoices)
@@ -1820,6 +1824,7 @@ class PlayState extends MusicBeatState
 		}
 
 		AL.filteri(sndFilter, AL.FILTER_TYPE, AL.FILTER_NULL);
+        #if tgt
  		if(ClientPrefs.ruin){
 			AL.effecti(sndEffect, AL.EFFECT_TYPE, AL.EFFECT_REVERB);
 			AL.effectf(sndEffect, AL.REVERB_DECAY_TIME, 5);
@@ -1834,12 +1839,13 @@ class PlayState extends MusicBeatState
 			track.filter = null;
 			track.pitch = playbackRate;
 		}
+        
 
 		inst.filter = null;
 		vocals.filter = null;
 		inst.effect = trackEffect;
 		vocals.effect = trackEffect;
-		
+		#end
 		inst.pitch = playbackRate;
 		vocals.pitch = playbackRate;
 
@@ -2746,8 +2752,7 @@ class PlayState extends MusicBeatState
 		*/
 
 		super.update(elapsed);
-		modManager.updateTimeline(curDecStep);
-		modManager.update(elapsed);
+		modManager.update(elapsed, curDecBeat, curDecStep);
 
 		if (generatedMusic)
 		{
@@ -3391,7 +3396,6 @@ class PlayState extends MusicBeatState
 						
 						Highscore.weekCompleted.set(ChapterData.curChapter.directory, true);
 						FlxG.save.data.weekCompleted = Highscore.weekCompleted;
-
 						FlxG.save.flush();
 					}
 				}
@@ -4060,7 +4064,7 @@ class PlayState extends MusicBeatState
 		vocals.volume = 0;
 
 		if (ClientPrefs.ghostTapping && !daNote.isSustainNote && ClientPrefs.missVolume > 0)
-			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), ClientPrefs.missVolume * FlxG.random.float(0.9, 1));
+			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), ClientPrefs.missVolume * FlxG.random.float(0.9, 1) );
 
 		if(instakillOnMiss)
 			doDeathCheck(true);
@@ -4098,7 +4102,7 @@ class PlayState extends MusicBeatState
 		//RecalculateRating();
 
 		if (ClientPrefs.missVolume > 0)
-			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), ClientPrefs.missVolume * FlxG.random.float(0.9, 1));
+			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), ClientPrefs.missVolume  * FlxG.random.float(0.9, 1));
 
 		for (field in playfields.members)
 		{
@@ -4214,7 +4218,7 @@ class PlayState extends MusicBeatState
         }
 
 		if (!note.hitsoundDisabled && ClientPrefs.hitsoundVolume > 0)
-			FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
+			FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume );
 
 		// tbh I hate hitCausesMiss lol its retarded
 		// added a shitty judge to deal w/ it tho!! 

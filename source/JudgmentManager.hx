@@ -95,7 +95,7 @@ class JudgmentManager {
             score: 0,
             accuracy: -75,
             health: -1.15,
-			comboBehaviour: ClientPrefs.wife3?BREAK:INCREMENT,
+			comboBehaviour: BREAK,
 			noteSplash: false,
         },
         TIER1 => {
@@ -253,6 +253,7 @@ class JudgmentManager {
 		#end
 
 		judgmentData.get(TIER4).accuracy = 100;
+		judgmentData.get(TIER2).comboBehaviour = INCREMENT;
 		this.useEpics = false;
     }
 }

@@ -287,7 +287,7 @@ class TitleState extends MusicBeatState
 					titleText.animation.play('press');
 
 				camHUD.flash(ClientPrefs.flashing ? FlxColor.WHITE : 0x4CFFFFFF, 1);
-				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7 );
 
 				transitioning = true;
 
