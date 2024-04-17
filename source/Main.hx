@@ -1,6 +1,7 @@
 package;
 
 import editors.ChartingState;
+import Github.RepoInfo;
 import Github.Release;
 import flixel.FlxG;
 import flixel.FlxState;
