@@ -49,6 +49,8 @@ class KadeHUD extends BaseHUD
 	{
 		super(iP1, iP2, songName, stats);
 
+		stats.changedEvent.add(statChanged);
+
 		//// Health bar
 		healthBar = new FNFHealthBar(iP1, iP2);
 		healthBarBG = healthBar.healthBarBG;
@@ -103,6 +105,10 @@ class KadeHUD extends BaseHUD
 		changedOptions([]);
 	}
 
+	function statChanged(stat:String, val:Dynamic)updateScoreTxt();
+    
+    
+
 	override function changedOptions(changed){
 		super.changedOptions(changed);
 
@@ -144,6 +150,7 @@ class KadeHUD extends BaseHUD
 		timeTxt.x = timeBarBG.x + (timeBarBG.width / 2) - (timeTxt.text.length * 5);
 
 		updateTimeBarAlpha();
+		updateScoreTxt();
 	}
 
 	function updateTimeBarAlpha()
@@ -169,29 +176,37 @@ class KadeHUD extends BaseHUD
 		healthBar.iconScale = 1.2;
 	}
 
-	override function update(elapsed:Float)
-	{
-		if (FlxG.keys.justPressed.NINE)
-			iconP1.swapOldIcon();
 
+    function updateScoreTxt(){
 		var shownScore:String;
 		var isHighscore:Bool;
-		if (ClientPrefs.showWifeScore){
+		if (ClientPrefs.showWifeScore)
+		{
 			shownScore = Std.string(Math.floor(totalNotesHit * 100));
 			isHighscore = songWifeHighscore != 0 && totalNotesHit > songWifeHighscore;
-		}else{
+		}
+		else
+		{
 			shownScore = Std.string(score);
 			isHighscore = songHighscore != 0 && score > songHighscore;
 		}		
 
-		scoreTxt.text = 
-			(isHighscore ? '$hiscoreString: ' : '$scoreString: ') + shownScore +
-			' | $cbString: ' + comboBreaks + 
-			' | $ratingString: '
+		var text = (isHighscore ? '$hiscoreString: ' : '$scoreString: ')
+			+ shownScore
+			+ ' | $cbString: '
+			+ comboBreaks
+			+ ' | $ratingString: '
 			+ (grade == '?' ? grade : Highscore.floorDecimal(ratingPercent * 100, 2)
 				+ '% / $grade [${(ratingFC == stats.cfc && ClientPrefs.wife3) ? stats.fc : ratingFC}]');
 		if (ClientPrefs.npsDisplay)
-			scoreTxt.text += ' | $npsString: ${nps} / ${npsPeak}';
+			text += ' | $npsString: ${nps} / ${npsPeak}';
+		scoreTxt.text = text;
+    }
+
+	override function update(elapsed:Float)
+	{
+		if (FlxG.keys.justPressed.NINE)
+			iconP1.swapOldIcon();
 
 		var lengthInPx = scoreTxt.textField.length * scoreTxt.frameHeight; // bad way but does more or less a better job
 		scoreTxt.x = (originalX - (lengthInPx / 2)) + 335;

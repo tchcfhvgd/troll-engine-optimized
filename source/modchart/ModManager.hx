@@ -316,8 +316,8 @@ class ModManager {
         // remove currently inactive mods from the active mods
         var discarded_mods:Array<String> = [];
 		var activated_mods:Array<String> = [];
-        for(mod in modArray){
-            var mod_name = mod.getName();
+		for (mod_name in touchedMods[player]){
+            var mod = get(mod_name);
             if(active_mods.contains(mod_name)){
                 if(!mod.shouldExecute(player, mod.getValue(player))){
                     var can_discard:Bool = true;
@@ -450,8 +450,8 @@ class ModManager {
         }
 		timeline.updateFuncs(step);
         runNodes();
-        for(pN in 0...touchedMods.length)touchedMods[pN] = [];
 		updateActiveMods(-1);
+        for(pN in 0...touchedMods.length)touchedMods[pN] = [];
 	}
 
  	public var playerAmount:Int = 2;

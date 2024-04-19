@@ -193,7 +193,7 @@ class JudgmentManager {
 		var d:JudgmentData = judgmentData.get(judgment);
 		return d.window * ((d.badJudgment && judgeTimescale<1)?1:judgeTimescale);
     }
-    
+
 	/**
 	 * Returns a judgment for a note.
 	 * @param note Note to return a judgment for
@@ -206,6 +206,14 @@ class JudgmentManager {
 		if (time==null)time=Conductor.songPosition;
 
 		var diff = Math.abs(note.strumTime - time);
+
+		if (note.staticWindow != null){
+			if (note.staticWindow != UNJUDGED && diff <= getWindow(note.staticWindow))
+                return note.staticWindow;
+            else
+                return UNJUDGED;
+        }
+
 
         switch(note.noteType){
             case 'Hurt Note':

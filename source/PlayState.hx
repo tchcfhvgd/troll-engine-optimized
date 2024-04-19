@@ -2009,7 +2009,6 @@ class PlayState extends MusicBeatState
 					type = editors.ChartingState.noteTypeList[type]; 
 				
 				var swagNote:Note = new Note(daStrumTime, daColumn, oldNote, gottaHitNote, false, false, hudSkin);
-				swagNote.realColumn = songNotes[1];
 				swagNote.sustainLength = songNotes[2];
                 
 				swagNote.gfNote = (section.gfSection && (songNotes[1]<4));
@@ -2614,20 +2613,6 @@ class PlayState extends MusicBeatState
 
 		callOnHScripts('update', [elapsed]);
 
-	/* 	for (shit in speedChanges)
-		{
-			if (shit.songTime <= Conductor.songPosition)
-				event = shit;
-			else
-				break;
-		} */
-/* 		if(speedChanges.length > 1){
-			if(speedChanges[1].songTime < Conductor.songPosition)
-				while (speedChanges.length > 1 && speedChanges[1].songTime < Conductor.songPosition)
-					speedChanges.shift();
-		} */
-		
-
 		if (camZooming)
 		{
 			var lerpVal = Math.exp(-elapsed * 3.125 * camZoomingDecay);
@@ -2731,25 +2716,12 @@ class PlayState extends MusicBeatState
 		FlxG.watch.addQuick("visualPos", Conductor.visualPosition);
 
 		checkEventNote();
-		
-		/* 		
-		if(midScroll){
-			for(field in notefields.members){
-				if(field.field==null)continue;
-				if(field.field.isPlayer){
-					if(field.alpha < 1){
-						field.alpha += 0.1 * elapsed;
-						if(field.alpha>1)field.alpha=1;
-					}
-				}else{
-					if(field.alpha > 0){
-						field.alpha -= 0.1 * elapsed;
-						if(field.alpha<0)field.alpha=0;
-					}
-				}
-			}
-		} 
-		*/
+
+/*         var count:Float = 0;
+        @:privateAccess
+		for (key in FlxG.bitmap._cache.keys())count++;
+        trace(count); */
+
 
 		super.update(elapsed);
 		modManager.update(elapsed, curDecBeat, curDecStep);

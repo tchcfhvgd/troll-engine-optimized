@@ -37,7 +37,7 @@ function judgeNote(note:Note, msDiff:Float){
         Judgement.TIER5 - Epic/Killer
         Judgement.MISS - Miss/Fail
         Judgement.UNJUDGED - Unjudged. Return this if the note shouldn't be hit.
-        JudgementHIT_MINE - Default mine hit. -200 score, 5% damage, and doesnt cause a combo break.
+        Judgement.HIT_MINE - Default mine hit. -200 score, 5% damage, and doesnt cause a combo break.
         Judgement.MISS_MINE - Miss/Fail, but has no damage. Used when a note has hitCausesMiss, so it can use the note's missHealth as damage.
     */
     trace("Called when the note gets judged");

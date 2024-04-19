@@ -36,6 +36,8 @@ class Note extends NoteObject
 		hitDiff: 0
 	}
 
+    public var staticWindow:Judgment;
+
 	public var mAngle:Float = 0;
 	public var bAngle:Float = 0;
 	
@@ -166,18 +168,8 @@ class Note extends NoteObject
 	public var desiredZIndex:Float = 0;
 	
 	// do not tuch
-	public var baseScaleX:Float = 1;
-	public var baseScaleY:Float = 1;
 	public var zIndex:Float = 0;
 	public var z:Float = 0;
-    public var realColumn:Int;
-
-    @:isVar
-	public var realNoteData(get, set):Int; // backwards compat
-    inline function get_realNoteData()
-        return realColumn;
-    inline function set_realNoteData(v:Int)
-        return realColumn = v;
 
     
 	public static var swagWidth:Float = 160 * 0.7;
