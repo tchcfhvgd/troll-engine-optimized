@@ -21,7 +21,9 @@ class ContentHelper {
 	public static var loadedContentDirectories:Array<String> = [];
     public static var loadedContent:Array<String> = [];
 	public static var contentMetadata:Map<String, ContentV3Metadata> = [];
-	public static var namespaceMap:Map<String, Array<String>> = ["troll_engine" => []]; // namespace => [contentWithNamespace], used to speed up lookups
+	public static var namespaceMap:Map<String, Array<String>> = [
+        "engine" => []
+    ]; // namespace => [contentWithNamespace], used to speed up lookups
 
     static function getJson(path:String): Dynamic
     {
@@ -35,7 +37,11 @@ class ContentHelper {
 
     public static function loadContent(){
         loadedContent = [];
+		namespaceMap = [
+            "engine" => []
+        ];
 
+		// TODO: make an array thats sorted by load order
 		for (modDir in Paths.getModDirectories(false))
 		{
             var is_new:Bool = false;
@@ -121,7 +127,7 @@ class ContentHelper {
 					}
 					contentMetadata.set(modDir, metadata);
                     if(Reflect.field(packJson, "runsGlobally"))
-						namespaceMap.get("troll_engine").push(modDir);
+						namespaceMap.get("engine").push(modDir);
                     else{
 						if (namespaceMap.get(modDir) == null)
 							namespaceMap.set(modDir, []);
@@ -153,6 +159,8 @@ class ContentHelper {
 
 			loadedContent.push(modDir);
 		}
-        // TODO: sort w/ load order
+        
+        namespaceMap.get("engine").push("_engineassets"); // tells it to look in the assets folder for the engine's default assets LAST
     }
+
 }

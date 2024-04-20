@@ -4674,6 +4674,7 @@ class PlayState extends MusicBeatState
 		});
 		*/
 
+        Paths.currentNamespace = 'troll_engine';
 		ClientPrefs.gameplaySettings.set('botplay', cpuControlled);
 
         #if LUA_ALLOWED

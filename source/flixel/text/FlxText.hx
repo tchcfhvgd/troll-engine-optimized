@@ -897,7 +897,7 @@ class FlxText extends FlxSprite
 			// Need to generate a new buffer to store the text graphic
 			var key:String = FlxG.bitmap.getUniqueKey('text(${this.text})');
 			// Also dispose of old one
-			var oldGraphic:Null<FlxGraphic> = graphic;
+			//var oldGraphic:Null<FlxGraphic> = graphic;
 			makeGraphic(newWidth, newHeight, FlxColor.TRANSPARENT, false, key);
 			graphic.persist = false;
 /* 			if (oldGraphic != null && oldGraphic.useCount == 0)

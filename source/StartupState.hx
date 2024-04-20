@@ -124,6 +124,9 @@ class StartupState extends FlxTransitionableState
 		Paths.music('freakyMenu');
 		Paths.getAllStrings();
 		ContentHelper.loadContent();
+
+        Paths.currentNamespace = 'test';
+		trace(Paths.getAssetNamespace("images/characters/BOYFRIEND.png"), Paths.getAssetNamespace("characters/menu/bf.json"));
 		/*
 		if (nextState == PlayState || nextState == editors.ChartingState){
 			Paths.currentModDirectory = "chapter1";

@@ -435,6 +435,8 @@ class RandomTitleLogo extends FlxSprite
 	public var frameRate:Float = 1 / 24;
 	public var size:Float = 0.72;
 
+    // TODO: Use NumberSequence to unhardcode this animation
+    // also this should be turned into a class TitleLogo and RandomTitleLogo should extend it
 	override public function update(elapsed:Float){
 		//// Title animation!
 		time += elapsed;

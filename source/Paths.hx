@@ -43,6 +43,43 @@ class Paths
 		"assets/images/Garlic-Bread-PNG-Images.png"
 	];
 
+    public static var currentNamespace:String = 'engine';
+
+    public static function getAssetNamespace(key:String, ?namespace:String){
+        if(namespace == null){
+			var split = key.split(":");
+            if(split.length == 1){
+                // no namespace stated
+                // goto default
+				namespace = currentNamespace; // currentNamespace should be set based on currently playing song
+            }else{
+                namespace = split.shift();
+                key = split.join(":");
+            }
+        }
+		var namespaces:Array<String> = [namespace];
+        if(namespace != 'engine')namespaces.push('engine');
+        
+		for (index in 0...namespaces.length){
+            var namespace = namespaces[index];
+			var folders:Array<String> = ContentHelper.namespaceMap.get(namespace);
+			for (mod in folders)
+			{
+				var path:String = '';
+                if(mod == '_engineassets')
+                    path = 'assets/$key';
+                else
+					path = Paths.mods('$mod/$namespace/$key');
+
+				if (FileSystem.exists(path))
+					return path;
+				
+			}
+        }
+
+        return '';
+    }
+
 	public static function excludeAsset(key:String)
 	{
 		if (!dumpExclusions.contains(key))
