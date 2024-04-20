@@ -900,12 +900,12 @@ class FlxText extends FlxSprite
 			var oldGraphic:Null<FlxGraphic> = graphic;
 			makeGraphic(newWidth, newHeight, FlxColor.TRANSPARENT, false, key);
 			graphic.persist = false;
-			if (oldGraphic != null && oldGraphic.useCount == 0)
+/* 			if (oldGraphic != null && oldGraphic.useCount == 0)
 			{
                 FlxG.bitmap.remove(oldGraphic);
 				oldGraphic.bitmap.dispose();
 				oldGraphic.bitmap.disposeImage();
-			}
+			} */ // prob unneeded
 			if (_hasBorderAlpha)
 				_borderPixels = graphic.bitmap.clone();
 
