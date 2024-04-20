@@ -828,7 +828,7 @@ class FlxText extends FlxSprite
 		var oldGraphic:FlxGraphic = graphic;
 		var graph:FlxGraphic = super.set_graphic(Value);
 		FlxG.bitmap.removeIfNoUse(oldGraphic);
-        if(oldGraphic.useCount == 0){
+		if (oldGraphic!=null && oldGraphic.useCount == 0){
 			oldGraphic.bitmap.dispose();
 			oldGraphic.bitmap.disposeImage();
         }
