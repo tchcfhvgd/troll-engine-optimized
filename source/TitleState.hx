@@ -87,9 +87,8 @@ class TitleState extends MusicBeatState
 		trace(randomStage);
 		if (randomStage != null){
 			Paths.currentModDirectory = randomStage[1];
-			bg = new Stage(randomStage[0]);
-            if(bg.stageScript != null)
-                bg.stageScript.set('titleScreen', true);
+			bg = new Stage(randomStage[0], false);
+            bg.startScript(false, ["titleScreen" => true]);
 		}
 
 		// Random logoooo
@@ -114,6 +113,9 @@ class TitleState extends MusicBeatState
 
 		//
 		blackScreen = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		blackScreen.alpha = 0.8;
+		titleText.visible = false;
+		logoBl.visible = false;
 
 		textGroup = new FlxGroup();
 
@@ -150,6 +152,10 @@ class TitleState extends MusicBeatState
     var darkness:FlxSprite;
 	override public function create():Void
 	{
+
+        if(initialized)
+			Paths.clearStoredMemory();
+
 		if (!loaded) load();
 
 		if (bg != null)
@@ -186,14 +192,16 @@ class TitleState extends MusicBeatState
 			camFollowPos.setPosition(camPos[0], camPos[1]);
 
 			add(bg);
-		}else{
+		}else
 			camGame.bgColor = 0xFF000000;
-		}
+		
 
+		var scale = 1920 / camGame.zoom;
 		darkness = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
-        darkness.scale.set(1920, 1920);
+        darkness.scale.set(scale, scale);
         darkness.updateHitbox();
         darkness.scrollFactor.set(0, 0);
+		darkness.screenCenter(XY);
 		darkness.alpha = 0.4;
         darkness.cameras = [camGame];
         add(darkness);
@@ -212,12 +220,14 @@ class TitleState extends MusicBeatState
 
 
 		////
-		if (initialized)
+		if (initialized){
+            Paths.clearUnusedMemory();
 			skipIntro();
-		else{
+        }else{
 			initialized = true;
 			MusicBeatState.playMenuMusic(0, true);
 		}
+
 	}
 
 	static function getIntroTextShit():Array<Array<String>>
@@ -465,6 +475,9 @@ class TitleState extends MusicBeatState
 	{
 		if (!skippedIntro)
 		{
+			titleText.visible = true;
+			logoBl.visible = true;
+
 			remove(ngSpr);
 			remove(blackScreen);
 			remove(textGroup);
