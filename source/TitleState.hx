@@ -389,18 +389,19 @@ class TitleState extends MusicBeatState
     override function stepHit(){
 		super.stepHit();
 
-		if (bg != null && bg.stageScript != null)
-		{
-			bg.stageScript.set("curStep", curStep);
-			bg.stageScript.call('onStepHit', []);
+		if (skippedIntro)
+            if (bg != null && bg.stageScript != null)
+            {
+                bg.stageScript.set("curStep", curStep);
+                bg.stageScript.call('onStepHit', []);
 
-            var nuSection:Int = Math.floor(curBeat / 4);
-            if(section != nuSection){
-                section = nuSection;
-				bg.stageScript.set("curSection", section);
-				bg.stageScript.call('onSectionHit', []);
+                var nuSection:Int = Math.floor(curBeat / 4);
+                if(section != nuSection){
+                    section = nuSection;
+                    bg.stageScript.set("curSection", section);
+                    bg.stageScript.call('onSectionHit', []);
+                }
             }
-		}
     }
 
 
@@ -411,10 +412,11 @@ class TitleState extends MusicBeatState
 	{
 		super.beatHit();
 
-		if (bg != null && bg.stageScript != null){
-            bg.stageScript.set("curBeat", curBeat);
-			bg.stageScript.call('onBeatHit', []);
-        }
+		if (skippedIntro)
+            if (bg != null && bg.stageScript != null){
+                bg.stageScript.set("curBeat", curBeat);
+                bg.stageScript.call('onBeatHit', []);
+            }
 
 		if (logoBl != null)
 			logoBl.time = 0;
@@ -424,10 +426,6 @@ class TitleState extends MusicBeatState
 			switch (sickBeats * 0.5)
 			{
 				case 1:
-                    FlxTween.tween(blackScreen, {alpha: 0.8}, Conductor.crochet * 0.002, {
-                        ease: FlxEase.quadInOut
-                    });
-                    
 					FlxG.sound.music.stop();
 					if (MusicBeatState.menuVox != null)
 					{
@@ -440,6 +438,9 @@ class TitleState extends MusicBeatState
 					MusicBeatState.playMenuMusic(0, true);
 					//FlxG.sound.music.fadeIn(4, 0, 0.7);
 				case 2:
+					FlxTween.tween(blackScreen, {alpha: 0.8}, Conductor.crochet * 0.002, {
+						ease: FlxEase.quadInOut
+					});
 					MusicBeatState.playMenuMusic(1, true);
 					createCoolText(['THE FNF TGT TEAM']);
 				case 4:
