@@ -231,8 +231,11 @@ class TitleState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		if (bg != null && bg.stageScript != null)
+		if (bg != null && bg.stageScript != null){
+			bg.stageScript.set("curDecBeat", curDecBeat);
+			bg.stageScript.set("curDecStep", curDecStep);
 			bg.stageScript.call('update', [elapsed]);
+        }
 
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
@@ -346,9 +349,24 @@ class TitleState extends MusicBeatState
 
 	private var sickBeats:Int = 0; //Basically curBeat but won't be skipped if you hold the tab or resize the screen
 	public static var closedState:Bool = false;
+    override function stepHit(){
+		super.stepHit();
+
+		if (bg != null && bg.stageScript != null)
+		{
+			bg.stageScript.set("curStep", curStep);
+			bg.stageScript.call('onStepHit', []);
+		}
+    }
+
 	override function beatHit()
 	{
 		super.beatHit();
+
+		if (bg != null && bg.stageScript != null){
+            bg.stageScript.set("curBeat", curBeat);
+			bg.stageScript.call('onBeatHit', []);
+        }
 
 		if (logoBl != null)
 			logoBl.time = 0;
