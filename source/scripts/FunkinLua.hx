@@ -1923,7 +1923,7 @@ class FunkinLua extends FunkinScript
 		});
 
 		addCallback("getTextFromFile", function(path:String, ?ignoreModFolders:Bool = false) {
-			return Paths.getTextFromFile(path, ignoreModFolders);
+			return Paths.getTextFromFile(path);
 		});
 
 		// DEPRECATED, DONT MESS WITH THESE SHITS, ITS JUST THERE FOR BACKWARD COMPATIBILITY

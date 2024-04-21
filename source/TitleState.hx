@@ -58,7 +58,30 @@ class TitleState extends MusicBeatState
 	public var camFollow = new FlxPoint(640, 360);
 	public var camFollowPos = new FlxObject(640, 360, 1, 1);
 	
-	static public function getRandomStage(){
+	static public function getRandomStage()
+	{
+		// Set up a stage list
+		var stages:Array<Array<String>> = []; // [stage name, mod directory]
+		for (namespace => dirs in ContentHelper.namespaceMap){
+			var modPath = Paths.getAssetNamespace('data/stageList.txt', namespace);
+			var daList = [];
+			trace(modPath, namespace);
+			if (FileSystem.exists(modPath))
+			{
+				var modsList = File.getContent(modPath);
+				if (modsList != null && modsList.trim().length > 0)
+					for (shit in modsList.split("\n"))
+						daList.push(shit.trim().replace("\n", ""));
+			}
+
+			for (stage in daList)
+				stages.push([stage, namespace]);
+        }
+
+		return FlxG.random.getObject(stages); // Get a random stage from the list
+	}
+    
+/* 	static public function getRandomStage(){
 		// Set up a stage list
 		var stages:Array<Array<String>> = []; // [stage name, mod directory]
 
@@ -66,17 +89,17 @@ class TitleState extends MusicBeatState
 		for (stage in Stage.getTitleStages())
 			stages.push([stage, ""]);
 
-		#if MODS_ALLOWED
+ 		#if MODS_ALLOWED
 		for (mod in Paths.getModDirectories())
 		{
 			Paths.currentModDirectory = mod;
 			for (stage in Stage.getTitleStages(true))
 				stages.push([stage, mod]);
 		}
-		#end
+		#end 
 
 		return FlxG.random.getObject(stages); // Get a random stage from the list
-	}
+	} */
 
 	static public function load()
 	{
@@ -86,8 +109,9 @@ class TitleState extends MusicBeatState
 
 		trace(randomStage);
 		if (randomStage != null){
-			Paths.currentModDirectory = randomStage[1];
-			bg = new Stage(randomStage[0], false);
+			//Paths.currentModDirectory = randomStage[1];
+			Paths.currentNamespace = randomStage[1];
+			bg = new Stage(randomStage[1] + ':' + randomStage[0], false);
             bg.startScript(false, ["titleScreen" => true]);
 		}
 
@@ -260,7 +284,6 @@ class TitleState extends MusicBeatState
 	}
 
 	var transitioning:Bool = false;
-	private static var playJingle:Bool = false;
 	var titleTimer:Float = 0;
 
 	override function update(elapsed:Float)

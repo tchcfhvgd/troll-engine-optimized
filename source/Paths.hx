@@ -46,20 +46,22 @@ class Paths
     public static var currentNamespace:String = 'engine';
 
     public static function getAssetNamespace(key:String, ?namespace:String){
+        #if MODS_ALLOWED
 		var namespaces:Array<String> = [];
         if(namespace == null){
 			var split = key.split(":");
             if(split.length == 1){
                 // no namespace stated
                 // goto default
-				namespace = currentNamespace; // currentNamespace should be set based on currently playing song
 				namespaces = ['override', currentNamespace, 'engine'];
             }else{
                 namespace = split.shift();
                 key = split.join(":");
 				namespaces = [namespace];
             }
-        }
+        }else
+			namespaces = [namespace];
+
 		
 
 		for (index in 0...namespaces.length){
@@ -68,13 +70,13 @@ class Paths
 			var folders:Array<String> = ContentHelper.namespaceMap.get(namespace);
             if(folders.length==0)continue;
 
-			for (mod in folders)
+			for (dir in folders)
 			{
 				var path:String = '';
-                if(mod == '_engineassets')
+				if (dir == '_engineassets')
                     path = 'assets/$key';
                 else
-					path = Paths.mods('$mod/$namespace/$key');
+					path = Paths.mods('$dir/$key');
 
 				if (FileSystem.exists(path))
 					return path;
@@ -83,6 +85,15 @@ class Paths
         }
 
         return '';
+		#else
+		var split = key.split(":");
+		if (split.length > 1)
+		{
+			split.shift();
+			key = split.join(":");
+		}
+        return 'assets/$key';
+        #end
     }
 
 	public static function excludeAsset(key:String)
@@ -371,13 +382,13 @@ class Paths
 	}
 
 	inline static public function font(key:String)
-	{
-		#if MODS_ALLOWED
+	{ 	
+        #if MODS_ALLOWED
 		var file:String = modsFont(key);
 		if (FileSystem.exists(file))
 			return file;
 		#end
-		return 'assets/fonts/$key';
+		return 'assets/fonts/$key'; 
 	}
 
     public static var locale(default, set):String = 'en-us';
@@ -576,45 +587,32 @@ class Paths
 
 	public static function returnGraphic(key:String, ?library:String)
 	{
-		#if MODS_ALLOWED
-		var modKey:String = modsImages(key);
-		if (FileSystem.exists(modKey))
-		{
-			if (!currentTrackedAssets.exists(modKey)){
-				var newGraphic:FlxGraphic = getGraphic(modKey);
-				newGraphic.persist = true;
-				currentTrackedAssets.set(modKey, newGraphic);
-			}
-			if (!localTrackedAssets.contains(modKey))localTrackedAssets.push(modKey);
-			return currentTrackedAssets.get(modKey);
-		}
-		#end
-
-		var path = getPath('images/$key.png', IMAGE, library);
-		if (Paths.exists(path, IMAGE))
-		{
-			if (!currentTrackedAssets.exists(path)){
+		var path = checkModFolders(key + '.png', 'images');
+		if (!FileSystem.exists(path))path = getPath('images/$key.png', IMAGE, library);
+		if (FileSystem.exists(path) || Paths.exists(path, IMAGE)){
+			if (!currentTrackedAssets.exists(path))
+			{
 				var newGraphic:FlxGraphic = getGraphic(path);
 				newGraphic.persist = true;
 				currentTrackedAssets.set(path, newGraphic);
 			}
-			if (!localTrackedAssets.contains(path))localTrackedAssets.push(path);
+			if (!localTrackedAssets.contains(path))
+				localTrackedAssets.push(path);
 			return currentTrackedAssets.get(path);
-		}
-
-		if (Main.showDebugTraces) trace('image "$key" returned null.');
+        }
+		if (Main.showDebugTraces)
+			trace('image "$key" returned null.');
 		return null;
-	}
+    }
 
 	public static var currentTrackedSounds:Map<String, Sound> = [];
 
 	public static function returnSoundPath(path:String, key:String, ?library:String)
 	{
 		#if MODS_ALLOWED
-		var file:String = modsSounds(path, key);
+		var file:String = getAssetNamespace('$path/$key.$SOUND_EXT');
 		if (FileSystem.exists(file))
 			return file;
-		
 		#end
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
 		return gottenPath;
@@ -623,7 +621,7 @@ class Paths
 	public static function returnSound(path:String, key:String, ?library:String)
 	{
 		#if MODS_ALLOWED
-		var file:String = modsSounds(path, key);
+		var file:String = getAssetNamespace('$path/$key.$SOUND_EXT');
 		if (FileSystem.exists(file))
 		{
 			if (!currentTrackedSounds.exists(file))
@@ -660,18 +658,8 @@ class Paths
 	}
 
 	// i just fucking realised there's already a function for this wtfff
-	static public function getText(key:String, ?ignoreMods:Bool = false):Null<String>
-	{
-		#if MODS_ALLOWED
-		if (ignoreMods != true){
-			var modPath:String = Paths.modFolders(key);
-			if (FileSystem.exists(modPath))
-				return File.getContent(modPath);
-		}
-		#end
-
-		return getContent(Paths.getPreloadPath(key));
-	}
+	static inline public function getText(key:String):Null<String>return getContent(getAssetNamespace(key));
+	
 
 	static public function getJson(path:String):Null<Dynamic>
 	{
@@ -690,38 +678,62 @@ class Paths
 
 	inline static public function mods(key:String = '')
 		return modFolderPath + key;
+    
+    inline static public function checkModFolders(key:String, folder:String){
+        var namespaceCheck = key.split(":");
+        if(namespaceCheck.length > 1){
+            // it HAS A NAMESPACE
+            var namespace = namespaceCheck.shift(); // GET DA NAMESPACE
+			return getAssetNamespace('$folder/${namespaceCheck.join(":")}', namespace); // PASS IT INTO HERE!!
+        }
+		return getAssetNamespace('$folder/$key');
+    }
 
-	inline static public function modsFont(key:String)
-		return modFolders('fonts/' + key);
+    inline static public function modsFont(key:String)
+		return checkModFolders(key, 'fonts');
 
-	inline static public function modsSongJson(key:String)
-		return modFolders('songs/' + key + '.json');
+    inline static public function modsSongJson(key:String)
+		return checkModFolders(key + ".json", 'songs');
 
-	inline static public function modsVideo(key:String, extension:String = VIDEO_EXT)
-		return modFolders('videos/' + key + '.' + extension);
+    inline static public function modsVideo(key:String, extension:String = VIDEO_EXT)
+		return checkModFolders('$key.$extension', 'videos');
 
-	inline static public function modsSounds(path:String, key:String)
-		return modFolders(path + '/' + key + '.' + SOUND_EXT);
+    inline static public function modsSounds(path:String, key:String)
+		return checkModFolders('$key.$SOUND_EXT', path);//modFolders(path + '/' + key + '.' + SOUND_EXT);
 
-	inline static public function modsImages(key:String)
-		return modFolders('images/' + key + '.png');
+    inline static public function modsImages(key:String)
+		return checkModFolders('$key.png', 'images');
 
-	inline static public function modsXml(key:String)
-		return modFolders('images/' + key + '.xml');
+    inline static public function modsXml(key:String)
+		return checkModFolders('$key.xml', 'images');
 
-	inline static public function modsTxt(key:String)
-		return modFolders('data/' + key + '.txt');
+    inline static public function modsTxt(key:String)
+		return checkModFolders('$key.txt', 'data');
 
-	inline static public function modsJson(key:String)
-		return modFolders('data/' + key + '.json');
+    inline static public function modsJson(key:String)
+		return checkModFolders('$key.json', 'data');
 
-	inline static public function modsShaderFragment(key:String, ?library:String)
-		return modFolders('shaders/'+key+'.frag');
-	
-	inline static public function modsShaderVertex(key:String, ?library:String)
-		return modFolders('shaders/'+key+'.vert');
+    inline static public function modsShaderFragment(key:String, ?library:String)
+		return checkModFolders('$key.frag', 'shaders');
 
-	inline static public function getFolders(dir:String, ?modsOnly:Bool = false){
+    inline static public function modsShaderVertex(key:String, ?library:String)
+        return checkModFolders('$key.vert', 'shaders');
+
+    inline static public function getFolders(dir:String, ?modsOnly:Bool=false){
+		var foldersToCheck:Array<String> = [];
+		for (namespace => mods in ContentHelper.namespaceMap)
+			for (mod in mods){
+                if(mod == '_engineassets'){
+					if (!modsOnly)
+						foldersToCheck.push(Paths.getPreloadPath('$dir/'));
+                }else
+				    foldersToCheck.push(Paths.mods('$mod/$dir/'));
+            }
+
+		return foldersToCheck;
+    }
+
+/* 	inline static public function getFolders(dir:String, ?modsOnly:Bool = false){
 		var foldersToCheck:Array<String> = [
 			#if MODS_ALLOWED
 			Paths.mods(Paths.currentModDirectory + '/$dir/'),
@@ -740,7 +752,7 @@ class Paths
 		#end
 
 		return foldersToCheck;
-	}
+	} */
 
 	inline static public function getGlobalContent(){
 		return globalContent;
@@ -765,10 +777,25 @@ class Paths
 
 		return globalContent;
 	}
-	
 	static public function modFolders(key:String, ignoreGlobal:Bool = false)
 	{
-		// TODO: check skins
+        // idk what to do with ignoreGlobal so gonna go unused for now ig
+		for (namespace => dirs in ContentHelper.namespaceMap){
+			for (dir in dirs)
+			{
+				if (dir == '_engineassets')
+                    continue;
+				else{
+					var fileToCheck = Paths.mods('$dir/$key');
+					if (FileSystem.exists(fileToCheck))return fileToCheck;
+                }
+			}
+        }
+        return mods(key);
+    }
+
+/* 	static public function modFolders(key:String, ignoreGlobal:Bool = false)
+	{
 		if (Paths.currentModDirectory != null && Paths.currentModDirectory.length > 0)
 		{
 			var fileToCheck = mods(Paths.currentModDirectory + '/' + key);
@@ -792,7 +819,7 @@ class Paths
 		}
 
 		return mods(key);
-	}
+	} */
 
 	// I might end up making this just return an array of loaded mods and require you to press a refresh button to reload content lol
 	// mainly for optimization reasons, so its not going through the entire content folder every single time

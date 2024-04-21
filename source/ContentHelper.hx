@@ -61,7 +61,7 @@ class ContentHelper {
                             if (namespaceMap.get(name) == null)
                                 namespaceMap.set(name, []);
                             
-                            namespaceMap.get(name).push(modDir);
+							namespaceMap.get(name).push(modDir + "/" + name);
                         }
                     });
                 }else{

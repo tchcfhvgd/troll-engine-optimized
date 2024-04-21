@@ -118,11 +118,11 @@ class Song
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
 		var path:String = Paths.formatToSongPath(folder) + '/' + Paths.formatToSongPath(jsonInput);
-		var rawJson:Null<String> = Paths.getText('songs/$path.json', false);
+		var rawJson:Null<String> = Paths.getText('songs/$path.json');
 		
 		#if PE_MOD_COMPATIBILITY
 		if (rawJson == null)
-			rawJson = Paths.getText('data/$path.json', false);
+			rawJson = Paths.getText('data/$path.json');
 		#end
 
 		if (rawJson == null){

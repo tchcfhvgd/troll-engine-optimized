@@ -88,30 +88,26 @@ class Stage extends FlxTypedGroup<FlxBasic>
 			return;
 		}
 
-		var baseFile:String = 'stages/$curStage.hscript';
-	
-		for (file in [#if MODS_ALLOWED Paths.modFolders(baseFile), #end Paths.getPreloadPath(baseFile)])
-		{
-			if (!Paths.exists(file))
-				continue;
+		var file = Paths.checkModFolders('$curStage.hscript', "stages");
+        if (!Paths.exists(file))
+            return;
+
 		
-			stageScript = FunkinHScript.fromFile(file, file, additionalVars);
+        stageScript = FunkinHScript.fromFile(file, file, additionalVars);
 
-			// define variables lolol
-			stageScript.set("stage", this); // for backwards compat lol
-			stageScript.set("add", add);
-			stageScript.set("remove", remove);
-			stageScript.set("insert", insert);
-			stageScript.set("this", this);
-			stageScript.set("foreground", foreground);
-			
-			if (buildStage){
-				stageScript.call("onLoad", [this, foreground]);
-				stageBuilt = true;
-			}
+        // define variables lolol
+        stageScript.set("stage", this); // for backwards compat lol
+        stageScript.set("add", add);
+        stageScript.set("remove", remove);
+        stageScript.set("insert", insert);
+        stageScript.set("this", this);
+        stageScript.set("foreground", foreground);
+        
+        if (buildStage){
+            stageScript.call("onLoad", [this, foreground]);
+            stageBuilt = true;
+        }
 
-			break;
-		}
 	}
 
 	public function buildStage()
@@ -181,7 +177,7 @@ class Stage extends FlxTypedGroup<FlxBasic>
 			}
 
         }else{
-			var modsList = Paths.getText('data/stageList.txt', false);
+			var modsList = Paths.getText('data/stageList.txt');
 			if (modsList != null && modsList.trim().length > 0)
 				for (shit in modsList.split("\n"))
 					daList.push(shit.trim().replace("\n", ""));
@@ -279,7 +275,14 @@ class StageData {
 		forceNextDirectory = stageFile == null ? '' : stageFile.directory;
 	}
 
-	public static function getStageFile(stage:String):StageFile {
+    public static function getStageFile(stage:String):StageFile {
+        var rawJson:String = null;
+		var path:String = Paths.checkModFolders(stage + ".json", "stages");
+		if (FileSystem.exists(path))
+			rawJson = File.getContent(path);
+		return cast Json.parse(rawJson);
+    }
+/* 	public static function getStageFile(stage:String):StageFile {
 		var rawJson:String = null;
 		var path:String = Paths.getPreloadPath('stages/' + stage + '.json');
 
@@ -299,5 +302,5 @@ class StageData {
 			return null;
 
 		return cast Json.parse(rawJson);
-	}
+	} */
 }
