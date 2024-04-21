@@ -9,4 +9,7 @@ class Globals {
 	{
 		return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
 	}
+
+	public static var variables:Map<String, Dynamic> = new Map();  // it MAKES WAY MORE SENSE FOR THIS TO BE HERE THAN IN PLAYSTATE GRRR BARK BARK
+
 }

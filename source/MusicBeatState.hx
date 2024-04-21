@@ -224,6 +224,12 @@ class MusicBeatState extends FlxUIState
 		return val == null ? 4 : val;
 	}
 
+    override function startOutro(fuck:()->Void){
+		return super.startOutro(() -> {
+			scripts.Globals.variables.clear();
+            return fuck();
+        });
+    }
 	// tgt
 	public static var menuMusic:Sound; // main menu loop
 	public static var menuVox:FlxSound; // jukebox

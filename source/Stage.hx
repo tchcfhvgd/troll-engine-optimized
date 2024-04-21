@@ -34,8 +34,10 @@ typedef StageFile =
 
 	@:optional var bg_color:Null<String>;
 
-	@:optional var camera_stage:Array<Float>; // for the title screen
-	@:optional var pixel_size:Null<Float>;
+    // title screen vars
+	@:optional var camera_stage:Array<Float>; 
+    @:optional var title_zoom:Float;
+
 	@:optional var preloadStrings:Array<String>;
 	#if sys
 	@:optional var preload:Array<Cache.AssetPreload>; // incase you would like to add more information, though you shouldnt really need to
@@ -168,10 +170,18 @@ class Stage extends FlxTypedGroup<FlxBasic>
 	
 		var daList:Array<String> = [];
 		#if MODS_ALLOWED
-		var modsList = Paths.getText('data/stageList.txt', false);
+        // dude wtf no this is crediting stages to mods that dont have one this is dumb
+		var modPath:String = Paths.modFolders('data/stageList.txt');
+		if (FileSystem.exists(modPath)){
+			var modsList = File.getContent(modPath);
+            for (shit in modsList.split("\n"))
+                daList.push(shit.trim().replace("\n", ""));
+        }
+
+/* 		var modsList = Paths.getText('data/stageList.txt', false);
 		if (modsList != null)
 			for (shit in modsList.split("\n"))daList.push(shit.trim().replace("\n",""));
-		
+		 */
 		var path = Paths.modFolders("metadata.json");
 		var rawJson:Null<String> = Paths.getContent(path);
 

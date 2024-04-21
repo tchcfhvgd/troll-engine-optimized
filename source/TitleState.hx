@@ -18,8 +18,19 @@ import sys.FileSystem;
 import sys.io.File;
 #end
 
+// used so stages wont break
+class FakeCharacter {
+	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void{}
+    public function new(){}
+}
 class TitleState extends MusicBeatState
 {
+    // for stage scripts
+    public var gf:FakeCharacter = new FakeCharacter();
+	public var dad:FakeCharacter = new FakeCharacter();
+	public var boyfriend:FakeCharacter = new FakeCharacter();
+    public var inCutscene:Bool = false;
+
 	public static var initialized:Bool = false;
 
 	static var curWacky:Array<String> = [];
@@ -32,6 +43,7 @@ class TitleState extends MusicBeatState
 	static var titleText:FlxSprite;
 	static var swagShader:ColorSwap = null;
 	static var bg:Stage;
+
 
 	static var loaded = false;
 
@@ -72,6 +84,7 @@ class TitleState extends MusicBeatState
 		
 		var randomStage = getRandomStage();
 
+		trace(randomStage);
 		if (randomStage != null){
 			Paths.currentModDirectory = randomStage[1];
 			bg = new Stage(randomStage[0]);
@@ -159,6 +172,8 @@ class TitleState extends MusicBeatState
 
 		if (bg != null){
 			camGame.zoom = bg.stageData.defaultZoom;
+			if (bg.stageData.title_zoom != null)
+				camGame.zoom = bg.stageData.title_zoom;
 
 			var color = FlxColor.fromString(bg.stageData.bg_color);
 			camGame.bgColor = color != null ? color : FlxColor.BLACK;
@@ -351,6 +366,8 @@ class TitleState extends MusicBeatState
 
 	private var sickBeats:Int = 0; //Basically curBeat but won't be skipped if you hold the tab or resize the screen
 	public static var closedState:Bool = false;
+	var section:Int = 0;
+    
     override function stepHit(){
 		super.stepHit();
 
@@ -358,8 +375,19 @@ class TitleState extends MusicBeatState
 		{
 			bg.stageScript.set("curStep", curStep);
 			bg.stageScript.call('onStepHit', []);
+
+            var nuSection:Int = Math.floor(curBeat / 4);
+            if(section != nuSection){
+                section = nuSection;
+				bg.stageScript.set("curSection", section);
+				bg.stageScript.call('onSectionHit', []);
+            }
 		}
     }
+
+
+
+   
 
 	override function beatHit()
 	{

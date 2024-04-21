@@ -263,24 +263,15 @@ class FunkinHScript extends FunkinScript
 			set("game", state);
 
 			if (state != null){
-				if (state is PlayState && state == PlayState.instance){ // the null check wasn't enough it seems
-					var state:PlayState = PlayState.instance;
-
-					set("global", state.variables);
+				if (state is PlayState && state == PlayState.instance) // the null check wasn't enough it seems
 					set("getInstance", getInstance);
-				}
-				else if (state is ChartingState && state == ChartingState.instance){
-					var state:ChartingState = ChartingState.instance;
-
-					set("global", state.variables);
-					set("getInstance", FlxG.get_state);
-				}
-			}else{
-				set("global", null);
-				set("getInstance", FlxG.get_state);
+                else
+                    set("getInstance", FlxG.get_state);
 
 			}
+            set("global", Globals.variables);
 		}
+
 
 		if (additionalVars != null){
 			for (key => value in additionalVars)
