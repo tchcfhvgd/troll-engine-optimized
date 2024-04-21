@@ -75,6 +75,8 @@ class TitleState extends MusicBeatState
 		if (randomStage != null){
 			Paths.currentModDirectory = randomStage[1];
 			bg = new Stage(randomStage[0]);
+            if(bg.stageScript != null)
+                bg.stageScript.set('titleScreen', true);
 		}
 
 		// Random logoooo
