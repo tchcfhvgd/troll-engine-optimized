@@ -113,7 +113,6 @@ class TitleState extends MusicBeatState
 
 		//
 		blackScreen = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-		blackScreen.alpha = 0.8;
 		titleText.visible = false;
 		logoBl.visible = false;
 
@@ -425,6 +424,10 @@ class TitleState extends MusicBeatState
 			switch (sickBeats * 0.5)
 			{
 				case 1:
+                    FlxTween.tween(blackScreen, {alpha: 0.8}, Conductor.crochet * 0.002, {
+                        ease: FlxEase.quadInOut
+                    });
+                    
 					FlxG.sound.music.stop();
 					if (MusicBeatState.menuVox != null)
 					{
