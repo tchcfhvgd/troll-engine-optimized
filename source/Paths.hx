@@ -46,23 +46,28 @@ class Paths
     public static var currentNamespace:String = 'engine';
 
     public static function getAssetNamespace(key:String, ?namespace:String){
+		var namespaces:Array<String> = [];
         if(namespace == null){
 			var split = key.split(":");
             if(split.length == 1){
                 // no namespace stated
                 // goto default
 				namespace = currentNamespace; // currentNamespace should be set based on currently playing song
+				namespaces = ['override', currentNamespace, 'engine'];
             }else{
                 namespace = split.shift();
                 key = split.join(":");
+				namespaces = [namespace];
             }
         }
-		var namespaces:Array<String> = [namespace];
-        if(namespace != 'engine')namespaces.push('engine');
-        
+		
+
 		for (index in 0...namespaces.length){
             var namespace = namespaces[index];
+			if (!ContentHelper.namespaceMap.exists(namespace))continue;
 			var folders:Array<String> = ContentHelper.namespaceMap.get(namespace);
+            if(folders.length==0)continue;
+
 			for (mod in folders)
 			{
 				var path:String = '';
