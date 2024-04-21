@@ -170,18 +170,24 @@ class Stage extends FlxTypedGroup<FlxBasic>
 	
 		var daList:Array<String> = [];
 		#if MODS_ALLOWED
-        // dude wtf no this is crediting stages to mods that dont have one this is dumb
-		var modPath:String = Paths.modFolders('data/stageList.txt');
-		if (FileSystem.exists(modPath)){
-			var modsList = File.getContent(modPath);
-            for (shit in modsList.split("\n"))
-                daList.push(shit.trim().replace("\n", ""));
+		if (modsOnly){
+			var modPath:String = Paths.modFolders('data/stageList.txt');
+			if (FileSystem.exists(modPath))
+			{
+				var modsList = File.getContent(modPath);
+				for (shit in modsList.split("\n"))
+					daList.push(shit.trim().replace("\n", ""));
+			}
+
+        }else{
+			var modsList = Paths.getText('data/stageList.txt', false);
+			if (modsList != null)
+				for (shit in modsList.split("\n"))
+					daList.push(shit.trim().replace("\n", ""));
         }
 
-/* 		var modsList = Paths.getText('data/stageList.txt', false);
-		if (modsList != null)
-			for (shit in modsList.split("\n"))daList.push(shit.trim().replace("\n",""));
-		 */
+
+		 
 		var path = Paths.modFolders("metadata.json");
 		var rawJson:Null<String> = Paths.getContent(path);
 
