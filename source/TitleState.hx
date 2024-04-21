@@ -147,6 +147,7 @@ class TitleState extends MusicBeatState
 		return super.destroy();
 	}
 
+    var darkness:FlxSprite;
 	override public function create():Void
 	{
 		if (!loaded) load();
@@ -189,6 +190,13 @@ class TitleState extends MusicBeatState
 			camGame.bgColor = 0xFF000000;
 		}
 
+		darkness = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
+        darkness.scale.set(1920, 1920);
+        darkness.updateHitbox();
+        darkness.scrollFactor.set(0, 0);
+		darkness.alpha = 0.4;
+        darkness.cameras = [camGame];
+        add(darkness);
 		////
 		logoBl.cameras = [camHUD];
 		titleText.cameras = [camHUD];
@@ -306,7 +314,8 @@ class TitleState extends MusicBeatState
 				if (titleText != null)
 					titleText.animation.play('press');
 
-				camHUD.flash(ClientPrefs.flashing ? FlxColor.WHITE : 0x4CFFFFFF, 1);
+                remove(darkness);
+				camHUD.flash(ClientPrefs.flashing ? FlxColor.WHITE : 0x4CFFFFFF, 1, null, true);
 				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7 );
 
 				transitioning = true;
