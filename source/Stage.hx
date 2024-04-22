@@ -47,18 +47,7 @@ typedef StageFile =
 class Stage extends FlxTypedGroup<FlxBasic>
 {
 	public var curStage = "stage1";
-	public var stageData:StageFile = {
-		directory: "",
-		defaultZoom: 0.8,
-		boyfriend: [500, 100],
-		girlfriend: [0, 100],
-		opponent: [-500, 100],
-		hide_girlfriend: false,
-		camera_boyfriend: [0, 0],
-		camera_opponent: [0, 0],
-		camera_girlfriend: [0, 0],
-		camera_speed: 1
-	};
+	public var stageData:StageFile;
 	public var foreground = new FlxTypedGroup<FlxBasic>();
 
 	public var stageScript:FunkinHScript;
@@ -71,9 +60,7 @@ class Stage extends FlxTypedGroup<FlxBasic>
 		if (stageName != null)
 			curStage = stageName;
 		
-		var newStageData = StageData.getStageFile(curStage);
-		if (newStageData != null)
-			stageData = newStageData;
+		stageData = StageData.getStageFile(curStage);
 
 		if (runScript)
 			startScript(false);
@@ -275,12 +262,31 @@ class StageData {
 		forceNextDirectory = stageFile == null ? '' : stageFile.directory;
 	}
 
+	static public function getDefaultStageFile():StageFile {
+		return {
+			directory: "",
+			defaultZoom: 0.8,
+			boyfriend: [500, 100],
+			girlfriend: [0, 100],
+			opponent: [-500, 100],
+			hide_girlfriend: false,
+			camera_boyfriend: [0, 0],
+			camera_opponent: [0, 0],
+			camera_girlfriend: [0, 0],
+			camera_speed: 1
+		};
+	}
+
     public static function getStageFile(stage:String):StageFile {
-        var rawJson:String = null;
 		var path:String = Paths.checkModFolders(stage + ".json", "stages");
-		if (FileSystem.exists(path))
-			rawJson = File.getContent(path);
-		return cast Json.parse(rawJson);
+		var json:Null<Dynamic> = Paths.getJson(path);
+
+		if (json==null){
+			trace('Error getting "$stage" JSON file', path);
+			return getDefaultStageFile();
+		}
+
+		return cast json;
     }
 /* 	public static function getStageFile(stage:String):StageFile {
 		var rawJson:String = null;
