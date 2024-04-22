@@ -39,7 +39,7 @@ class TitleState extends MusicBeatState
 	static var textGroup:FlxGroup;
 	static var ngSpr:FlxSprite;
 
-	static var logoBl:RandomTitleLogo;
+	static var logoBl:TitleLogo;
 	static var titleText:FlxSprite;
 	static var swagShader:ColorSwap = null;
 	static var bg:Stage;
@@ -118,7 +118,7 @@ class TitleState extends MusicBeatState
 		// Random logoooo
 		swagShader = new ColorSwap();
 
-		logoBl = new RandomTitleLogo();
+		logoBl = new TitleLogo();
 		logoBl.scrollFactor.set();
 		logoBl.screenCenter(XY);
 		
@@ -136,14 +136,17 @@ class TitleState extends MusicBeatState
 		titleText.screenCenter(X);
 
 		//
-		blackScreen = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		titleText.visible = false;
 		logoBl.visible = false;
+
+		blackScreen = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
+		blackScreen.scale.set(FlxG.width, FlxG.height);
+		blackScreen.updateHitbox();
 
 		textGroup = new FlxGroup();
 
 		//
-		ngSpr = new FlxSprite(0, FlxG.height * 0.52).loadGraphic(Paths.image('newgrounds_logo'));
+		ngSpr = new FlxSprite(0, FlxG.height * 0.52, Paths.image('newgrounds_logo'));
 		ngSpr.visible = false;
 		ngSpr.scale.set(0.8, 0.8);
 		ngSpr.updateHitbox();
@@ -446,50 +449,46 @@ class TitleState extends MusicBeatState
 
 		if(!closedState) {
 			sickBeats++;
-			switch (sickBeats * 0.5)
+			switch (sickBeats #if tgt * 0.5 #end)
 			{
 				case 1:
-					FlxG.sound.music.stop();
-					if (MusicBeatState.menuVox != null)
-					{
-						MusicBeatState.menuVox.stop();
-						MusicBeatState.menuVox.destroy();
-						MusicBeatState.menuVox = null;
-					}
-					
-					
+					MusicBeatState.stopMenuMusic();
 					MusicBeatState.playMenuMusic(0, true);
-					//FlxG.sound.music.fadeIn(4, 0, 0.7);
 				case 2:
 					FlxTween.tween(blackScreen, {alpha: 0.8}, Conductor.crochet * 0.002, {
 						ease: FlxEase.quadInOut
 					});
 					MusicBeatState.playMenuMusic(1, true);
-					createCoolText(['THE FNF TGT TEAM']);
-				case 4:
-					addMoreText('presents');
-				case 5:
-					deleteCoolText();
-				case 6:
-					createCoolText(['In association', 'with'], -40);
+					
+					#if	tgt	createCoolText(['THE FNF TGT TEAM']);
+					#else	createCoolText(['THE FNF TGT TEAM']);
+					#end
+				case 4: addMoreText('presents');
+				case 5: deleteCoolText();
+
+				case 6: createCoolText(['Without any', 'association to'], -40);
 				case 8:
-					addMoreText('tailsgetstrolled dot org', -40);
+					#if tgt	addMoreText('tailsgetstrolled dot org', -40);
+					#else	addMoreText('Newgrounds', -40);
+					#end
 					ngSpr.visible = true;
 				case 9:
 					deleteCoolText();
 					ngSpr.visible = false;
-				case 10:
-					createCoolText([curWacky[0]]);
-				case 12:
-					addMoreText(curWacky[1]);
-				case 13:
-					deleteCoolText();
-				case 14:
-					addMoreText('Tails');
-				case 15:
-					addMoreText('Gets');
-				case 16:
-					addMoreText('Trolled');
+				
+				case 10: createCoolText([curWacky[0]]);
+				case 12: addMoreText(curWacky[1]);
+				case 13: deleteCoolText();
+
+				#if tgt
+				case 14: addMoreText('Tails');
+				case 15: addMoreText('Gets');
+				case 16: addMoreText('Trolled');
+				#else
+				case 14: addMoreText('Friday');
+				case 15: addMoreText('Night');
+				case 16: addMoreText("Funkin");
+				#end
 				case 17:
 					skipIntro();
 			}
@@ -516,15 +515,19 @@ class TitleState extends MusicBeatState
 	}
 }
 
-class RandomTitleLogo extends FlxSprite
+class TitleLogo extends FlxSprite
 {
 	public var titleName:String;
 
 	public function new(?X:Float, ?Y:Float, ?Name:String)
 	{
-		titleName = Name != null ? Name : FlxG.random.getObject(getTitlesList());
+		var titleGraphic = Paths.image('logo');
 
-		super(X, Y, Paths.image('titles/${titleName}'));
+		if (titleGraphic == null || Name != null){
+			titleGraphic = Paths.image('titles/${Name != null ? Name : FlxG.random.getObject(getTitlesList())}');
+		}
+
+		super(X, Y, titleGraphic);
 		antialiasing = true;
 	}
 
