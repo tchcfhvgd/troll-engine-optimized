@@ -2,6 +2,7 @@ package;
 
 import flixel.tweens.FlxEase;
 import flixel.math.FlxPoint;
+import flixel.util.FlxColor;
 
 using StringTools;
 
