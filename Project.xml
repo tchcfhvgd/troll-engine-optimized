@@ -46,7 +46,7 @@
 	<classpath path="source" />
 	
 	<assets path="assets"/>
-	<assets path='default_content'	rename='content'	embed='true' />
+	<assets path='example_content'	rename='content'	embed='true' />
 
     <!-- TROLL ENGINE CUSTOMIZATION -->
 	<define name="USE_EPIC_JUDGEMENT" />
