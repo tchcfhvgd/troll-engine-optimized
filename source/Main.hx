@@ -225,4 +225,5 @@ class Main extends Sprite
 			bread.visible = false;
 			addChild(bread);
 		}
+	}
 }
