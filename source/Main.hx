@@ -215,7 +215,11 @@ class Main extends Sprite
 		if (!troll){
 			fpsVar = new FPS(10, 3, 0xFFFFFF);
 			fpsVar.visible = false;
-			addChild(fpsVar);
+			#if !mobile
+		        addChild(fpsVar);
+		        #else
+		        FlxG.game.addChild(fpsVar);
+		        #end
 
 			bread = new Bread();
 			bread.visible = false;
