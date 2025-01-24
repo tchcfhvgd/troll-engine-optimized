@@ -26,6 +26,10 @@ import openfl.events.UncaughtErrorEvent;
 import sys.io.File;
 #end
 
+#if mobile
+import mobile.CopyState;
+#end
+
 #if (windows && cpp)
 @:cppFileCode('#include <windows.h>')
 #end
@@ -76,10 +80,33 @@ class Main extends Sprite
 	public static function main():Void
 	{
 		Lib.current.addChild(new Main());
+		#if cpp
+		cpp.NativeGc.enable(true);
+		#elseif hl
+		hl.Gc.enable(true);
+		#end
 	}
 
 	public function new()
 	{
+		#if mobile
+		#if android
+		StorageUtil.requestPermissions();
+		#end
+		Sys.setCwd(StorageUtil.getStorageDirectory());
+		#end
+
+		CrashHandler.init();
+
+		#if windows
+		@:functionCode("
+		#include <windows.h>
+		#include <winuser.h>
+		setProcessDPIAware() // allows for more crisp visuals
+		DisableProcessWindowsGhosting() // lets you move the window and such if it's not responding
+		")
+		#end
+		
 		super();
 
 		if (stage != null)
@@ -181,85 +208,17 @@ class Main extends Sprite
 		FlxG.mouse.useSystemCursor = true;
 		FlxG.mouse.visible = false;
 
+		#if android
+		FlxG.android.preventDefaultKeys = [BACK]; 
+		#end
+
 		if (!troll){
-			#if !mobile
 			fpsVar = new FPS(10, 3, 0xFFFFFF);
 			fpsVar.visible = false;
 			addChild(fpsVar);
-			#end
 
 			bread = new Bread();
 			bread.visible = false;
 			addChild(bread);
 		}
-	
-
-		#if CRASH_HANDLER
-		// Original code was made by sqirra-rng, big props to them!!!
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(
-			UncaughtErrorEvent.UNCAUGHT_ERROR, 
-			(event:UncaughtErrorEvent)->{
-				onCrash(event.error);
-			}
-		);
-
-
-		#if cpp
-		// Thank you EliteMasterEric, very cool!
-		untyped __global__.__hxcpp_set_critical_error_handler(onCrash);
-		#end
-		#end
-	}
-
-	
-	#if CRASH_HANDLER
-	function onCrash(errorName:String):Void
-	{
-		////
-		var ogTrace = haxe.Log.trace;
-		haxe.Log.trace = (msg, ?pos)->{
-			ogTrace(msg, null);
-		}
-
-		////
-		trace("\nCall stack starts below");
-
-		var callstack:String = "";
-
-		for (stackItem in CallStack.exceptionStack(true))
-		{
-			switch (stackItem)
-			{
-				case FilePos(s, file, line, column):
-					callstack += '$file:$line\n';
-				default:
-			}
-		}
-
-		callstack += '\n$errorName';
-
-		trace('\n$callstack\n');
-
-		#if (windows && cpp)
-		windows_showErrorMsgBox(callstack, errorName);
-		#else
-		Application.current.window.alert(callstack, errorName);
-		#end
-
-		#if discord_rpc
-		DiscordClient.shutdown(true);
-		#end
-
-		#if sys
-		File.saveContent("crash.txt", callstack);
-		Sys.exit(1);
-		#end
-	}
-
-	#if (windows && cpp)
-	@:functionCode('MessageBox(NULL, message, title, MB_ICONERROR | MB_OK);')
-	function windows_showErrorMsgBox(message:String, title:String){}
-	#end
-
-	#end
 }
