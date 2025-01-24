@@ -32,7 +32,7 @@
     <window if="desktop" orientation="landscape" fullscreen="false" resizable="true" vsync="false" />
 
 	<!--Mobile-specific-->
-    <window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" resizable="false" />
+    <window if="mobile" orientation="landscape" fullscreen="true" resizable="false" allow-shaders="true" require-shaders="true" allow-high-dpi="true" />
 
 	<!--Switch-specific-->
     <window if="switch" orientation="landscape" fullscreen="true" width="0" height="0" resizable="true" />
@@ -46,7 +46,7 @@
 	<classpath path="source" />
 	
 	<assets path="assets"/>
-	<assets path='example_content'	rename='content'	embed='true' />
+	<assets path='example_content'	rename='content'	embed='false' />
 
     <!-- TROLL ENGINE CUSTOMIZATION -->
 	<define name="USE_EPIC_JUDGEMENT" />
@@ -69,6 +69,7 @@
 	<haxelib name="flixel" version="5.3.1" />
 	<haxelib name="flixel-ui" version="2.5.0"/>
 	<haxelib name="flixel-addons" version="3.1.1"/>
+	<haxelib name="extension-androidtools" if="android" />
 
 	<haxelib name="discord_rpc" if="desktop cpp"/>
 
@@ -97,12 +98,17 @@
 
     <!-- ______________________________ Haxedefines _____________________________ -->
 
-	<section if="CRASH_HANDLER">
-		<haxedef name="HXCPP_STACK_TRACE" />
+	<section if="cpp">
 		<haxedef name="HXCPP_CHECK_POINTER" />
 		<haxedef name="HXCPP_STACK_LINE" />
-		<haxedef name="openfl-enable-handle-error" />
+		<haxedef name="HXCPP_STACK_TRACE" />
+		<haxedef name="HXCPP_CATCH_SEGV" />
 	</section>
+
+	<haxedef name='no-deprecation-warnings' />
+
+	<!-- Do whatever you want I'm tired uninstall and install everytime -->
+	<certificate path="key.keystore" password="psychengine" alias="psychport" alias-password="psychengine" if="android" unless="debug" />
 
     <!-- <haxedef name="no_traces" if="final"/> -->
 
