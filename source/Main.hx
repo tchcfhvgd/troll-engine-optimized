@@ -203,7 +203,7 @@ class Main extends Sprite
 				startFullscreen = FlxG.save.data.fullscreen;
 		}
 		
-		addChild(new FNFGame(gameWidth, gameHeight, initialState, #if(flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen));
+		addChild(new FNFGame(gameWidth, gameHeight, #if (mobile && MODS_ALLOWED) !CopyState.checkExistingFiles() ? CopyState : #end initialState, #if(flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen));
 
 		FlxG.mouse.useSystemCursor = true;
 		FlxG.mouse.visible = false;
