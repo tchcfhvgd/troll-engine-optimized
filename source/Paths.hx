@@ -41,7 +41,8 @@ class Paths
 		'content/global/music/freakyIntro.$SOUND_EXT',
 		'content/global/music/freakyMenu.$SOUND_EXT',
 		'content/global/music/breakfast.$SOUND_EXT',
-		"assets/images/Garlic-Bread-PNG-Images.png"
+		"assets/images/Garlic-Bread-PNG-Images.png",
+		'assets/images/mobile/touchpad/bg.png'
 	];
 
 	public static function excludeAsset(key:String)
@@ -75,6 +76,11 @@ class Paths
 		}
 		// run the garbage collector for good measure lmfao
 		openfl.system.System.gc();
+		#if cpp
+		cpp.NativeGc.run(true);
+		#elseif hl
+		hl.Gc.major();
+		#end
 	}
 
 	/** removeBitmap(FlxSprite.graphic.key); **/
@@ -712,7 +718,7 @@ class Paths
 
 	public static var modsList:Array<String> = [];
 	#if MODS_ALLOWED
-	static final modFolderPath:String = "content/";
+	static final modFolderPath:String = #if mobile Sys.getCwd() + #end "content/";
 
 	inline static public function mods(key:String = '')
 		return modFolderPath + key;
@@ -844,7 +850,28 @@ class Paths
 		#end
 	}
 	
-	public static function loadTheFirstEnabledMod()
+	public static function readDirectory(directory:String):Array<String>
+	{
+		#if MODS_ALLOWED
+		return FileSystem.readDirectory(directory);
+		#else
+		var dirs:Array<String> = [];
+		for (dir in Assets.list().filter(folder -> folder.startsWith(directory)))
+		{
+			@:privateAccess
+			for (library in lime.utils.Assets.libraries.keys())
+			{
+				if (library != 'default' && Assets.exists('$library:$dir') && (!dirs.contains('$library:$dir') || !dirs.contains(dir)))
+					dirs.push('$library:$dir');
+				else if (Assets.exists(dir) && !dirs.contains(dir))
+					dirs.push(dir);
+			}
+		}
+		return dirs.map(dir -> dir.substr(dir.lastIndexOf("/") + 1));
+		#end
+	}
+
+        public static function loadTheFirstEnabledMod()
 	{
 		Paths.currentModDirectory = '';
 	}
