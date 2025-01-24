@@ -1,6 +1,7 @@
 #if !macro
 import flixel.*;
 import flixel.sound.FlxSound;
+import mobile.StorageUtil;
 
 #if tgt
 import tgt.MainMenuState;
