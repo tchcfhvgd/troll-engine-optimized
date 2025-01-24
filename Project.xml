@@ -45,24 +45,24 @@
 
 	<classpath path="source" />
 	
-	<assets path="assets"	unless="tgt"/>
-	<assets path='default_content'	rename='content'	embed='false' />
+	<assets path="assets"/>
+	<assets path='default_content'	rename='content'	embed='true' />
 
     <!-- TROLL ENGINE CUSTOMIZATION -->
 	<define name="USE_EPIC_JUDGEMENT" />
-	<define name="VIDEOS_ALLOWED" if="tgt cpp || cpp final"/>
+	<define name="VIDEOS_ALLOWED" if="desktop || mobile"/>
 	<define name="HSCRIPT_ALLOWED" />
-	<define name="MODS_ALLOWED" if="desktop" />
+	<define name="MODS_ALLOWED" if="desktop || mobile" />
 	<define name="CRASH_HANDLER" if="desktop release || desktop final" />
 	<define name="MULTICORE_LOADING" if="sys windows" />
     <!-- <define name="tgt" if="display"/> --> <!--Uncomment if you want auto complete to assume youre compiling for TGT-->
 
     <!--Remove if you dont want Lua to be usable. Note that if you remove this, you should remove PE_MOD_COMPATIBILITY too -->
-	<define name="LUA_ALLOWED" if="desktop cpp"/>
+	<define name="LUA_ALLOWED" if="desktop cpp || mobile"/>
     <!--Remove if you dont want Psych Engine mod compatibility -->
 	<define name="PE_MOD_COMPATIBILITY" if="LUA_ALLOWED" />
     <!--Remove if you dont want the engine to autoupdate -->
-	<define name="DO_AUTO_UPDATE" if="desktop" unless="debug || tgt final"/>
+	<define name="DO_AUTO_UPDATE" if="desktop" unless="debug"/>
 
     <!-- _______________________________ Libraries ______________________________ -->
 
@@ -93,38 +93,7 @@
 
 	<!-- __________________ lime build windows -release -Dtgt __________________ -->
 	
-    <section if="tgt"> 
-		<app title="Tails Gets Trolled" version="0.4.1"/>
-
-		<!--means tgt will build into a seperate folder mainly so I dont have shit break when it relies on TGT specific source stuff + tgt assets-->
-		<set name="BUILD_DIR" value="export/debug-tgt" if="debug"/>
-		<set name="BUILD_DIR" value="export/release-tgt" unless="debug"/>
-		<set name="BUILD_DIR" value="export/32bit-tgt" if="32bits"/>
-
-		<assets path="assets-tgt" rename="assets"/>
-
-		<define name="USE_EPIC_JUDGEMENT"/>
-		<define name="VIDEOS_ALLOWED"/>
-		<define name="SCRIPTABLE_STATES"/>
-        
-        <undefine name="PE_MOD_COMPATIBILITY" if="final"/>
-		<!-- <undefine name="DO_AUTO_UPDATE"/> -->
-        <!-- <undefine name="LUA_ALLOWED"/> --> <!-- There's one lua script on TGT and I'm not rewritting it -->
-
-		<assets path="flixel" embed="true"/> <!-- To override some Flixel assets -->
-
-		<icon path="art-tgt/iconOG.png" />
-		<icon path="art-tgt/icon192.png" size='192'/>
-		<icon path="art-tgt/icon64.png" size='64'/>
-		<icon path="art-tgt/icon32.png" size='32'/>
-		<icon path="art-tgt/icon16.png" size='16'/>
-    </section>
-	<section unless="tgt">
-		<icon path="art/iconOG.png" />
-		<icon path="art/icon64.png" size='64'/>
-		<icon path="art/icon32.png" size='32'/>
-		<icon path="art/icon16.png" size='16'/>
-	</section>
+    
 
     <!-- ______________________________ Haxedefines _____________________________ -->
 
@@ -147,8 +116,8 @@
     <!--<haxedef name="FLX_NO_NATIVE_CURSOR" />-->
 
     <!--Optimise inputs, be careful you will get null errors if you don't use conditionals in your game-->
-	<haxedef name="FLX_NO_MOUSE" if="mobile" />
-	<haxedef name="FLX_NO_TOUCH" if="desktop" />
+	<!--<haxedef name="FLX_NO_MOUSE" if="mobile" />-->
+	<!--<haxedef name="FLX_NO_TOUCH" if="desktop" />-->
     <!-- <haxedef name="FLX_NO_KEYBOARD" if="mobile" /> -->
     <!--<haxedef name="FLX_NO_GAMEPAD" />-->
 
