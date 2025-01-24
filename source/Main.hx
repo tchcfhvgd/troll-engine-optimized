@@ -21,6 +21,7 @@ import Discord.DiscordClient;
 #if CRASH_HANDLER
 import haxe.CallStack;
 import openfl.events.UncaughtErrorEvent;
+#end
 
 #if sys
 import sys.io.File;
@@ -32,7 +33,6 @@ import mobile.CopyState;
 
 #if (windows && cpp)
 @:cppFileCode('#include <windows.h>')
-#end
 #end
 
 class Main extends Sprite
