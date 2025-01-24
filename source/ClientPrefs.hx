@@ -621,6 +621,16 @@ class ClientPrefs
 		'opponentplay' => false
 	];
 
+        // Mobile and Mobile Controls Releated
+	public static var extraButtons:String = "NONE"; // mobile extra button option
+	public static var hitboxPos:Bool = true; // hitbox extra button position option
+	public static var controlsAlpha:Float = FlxG.onMobile ? 0.6 : 0;
+	public static var screensaver:Bool = false;
+	#if android
+	public static var storageType:String = "EXTERNAL";
+	#end
+	public static var hitboxType:String = "Gradient";
+
 	inline public static function getGameplaySetting(name:String, defaultValue:Dynamic):Dynamic
 	{
 		return ((!PlayState.isStoryMode && gameplaySettings.exists(name)) ? gameplaySettings.get(name) : defaultValue);
