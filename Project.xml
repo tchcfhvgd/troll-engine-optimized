@@ -51,6 +51,7 @@
 
     <!-- TROLL ENGINE CUSTOMIZATION -->
 	<define name="USE_EPIC_JUDGEMENT" />
+	<define name="SCRIPTABLE_STATES" />	
 	<define name="VIDEOS_ALLOWED" if="desktop || mobile"/>
 	<define name="HSCRIPT_ALLOWED" />
 	<define name="MODS_ALLOWED" if="desktop || mobile" />
