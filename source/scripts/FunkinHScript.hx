@@ -44,6 +44,36 @@ class FunkinHScript extends FunkinScript
 		return new FunkinHScript(parser.parseString(""), false);
 	}
 
+	public static function importConvertCode(scriptString:String) {
+			var scriptLines = scriptString.split('\n');
+			var canOverrideImport:Bool = true;
+			var importStr:String = 'import ';
+			var finalStr:String = '';
+			for (line in scriptLines) {
+				var trimLine = StringTools.trim(line);
+				if (canOverrideImport && StringTools.startsWith(trimLine, importStr)) {
+					var fullClass = trimLine.substring(importStr.length, trimLine.indexOf(';'));
+					var dotIdx = fullClass.lastIndexOf('.');
+					var newString:String = '';
+					var packages;
+					var classs;
+					if (dotIdx != -1) {
+						packages = fullClass.substr(0, dotIdx);
+						classs = fullClass.substring(dotIdx + 1, fullClass.length);
+						newString = 'addHaxeLibrary("' + classs + '", "' + packages + '")';
+					} else {
+						classs = fullClass;
+						newString = 'addHaxeLibrary("' + classs + '")';
+					}
+					line = StringTools.replace(line, 'import ' + fullClass, newString);
+				} else if (trimLine.length > 0) {
+					canOverrideImport = false;
+				}
+				finalStr += line + '\n';
+			}
+			return finalStr;
+	}
+
 	public static function fromString(script:String, ?name:String = "Script", ?additionalVars:Map<String, Any>, ?doCreateCall:Bool = true)
 	{
 		parser.line = 1;
@@ -68,7 +98,7 @@ class FunkinHScript extends FunkinScript
 	}
 
 	public static function fromFile(file:String, ?name:String, ?additionalVars:Map<String, Any>, ?doCreateCall:Bool = true)
-		return fromString(Paths.getContent(file), (name == null ? file : name), additionalVars, doCreateCall);
+		return fromString(Paths.getContent(importConvertCode(file)), (name == null ? file : name), additionalVars, doCreateCall);
 
 	////
 	var interpreter:Interp = new Interp();
