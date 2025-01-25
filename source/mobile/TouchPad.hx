@@ -197,8 +197,8 @@ class TouchPad extends MobileInputManager implements IMobileControls
 	{
 		var button = new TouchButton(X, Y, IDs);
 		button.label = new FlxSprite();
-		button.loadGraphic(Paths.image('touchpad/bg', "mobile"));
-		button.label.loadGraphic(Paths.image('touchpad/${Graphic.toUpperCase()}', "mobile"));
+		button.loadGraphic(Paths.image('touchpad/bg'));
+		button.label.loadGraphic(Paths.image('touchpad/${Graphic.toUpperCase()}'));
 
 		button.scale.set(0.243, 0.243);
 		button.updateHitbox();
