@@ -4115,7 +4115,7 @@ class PlayState extends MusicBeatState
 				if (field.inControl && !field.autoPlayed && field.isPlayer)
 				{
 					field.keysPressed[buttonCode] = false;
-					var spr:StrumNote = field.strumNotes[key];
+					var spr:StrumNote = field.strumNotes[buttonCode];
 					if (spr != null)
 					{
 						spr.playAnim('static');
