@@ -87,6 +87,9 @@ class GameOverSubstate extends MusicBeatSubstate
 
 		canEnd = true;
 		super.create();
+
+		addTouchPad("NONE", "A_B");
+		addTouchPadCamera();
 	}
 
 	override function destroy(){
