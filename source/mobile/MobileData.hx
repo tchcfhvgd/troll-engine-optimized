@@ -140,7 +140,7 @@ class MobileData
 		if(mods)
 		{
 			// Global mods first
-			for(mod in Paths.getGlobalMods())
+			for(mod in Paths.getGlobalContent())
 			{
 				var folder:String = Paths.mods(mod + '/' + fileToFind);
 				if(FileSystem.exists(folder) && !foldersToCheck.contains(folder)) foldersToCheck.push(folder);
