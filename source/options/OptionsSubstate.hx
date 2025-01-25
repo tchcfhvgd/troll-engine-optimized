@@ -742,6 +742,7 @@ class OptionsSubstate extends MusicBeatSubstate
 		checkWindows();
 
 		addTouchPad("LEFT_FULL", "A_B");
+		addTouchPadCamera();
 		
 		super.create();
 		//trace('OptionState creation took ${Sys.cpuTime() - startTime} seconds.');
