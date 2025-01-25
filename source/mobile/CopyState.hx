@@ -80,12 +80,6 @@ class CopyState extends MusicBeatState
 
 		add(new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0xffcaff4d));
 
-		loadingImage = new FlxSprite(0, 0, Paths.image('trollface'));
-		loadingImage.setGraphicSize(0, FlxG.height);
-		loadingImage.updateHitbox();
-		loadingImage.screenCenter();
-		add(loadingImage);
-
 		loadingBar = new FlxBar(0, FlxG.height - 26, FlxBarFillDirection.LEFT_TO_RIGHT, FlxG.width, 26);
 		loadingBar.setRange(0, maxLoopTimes);
 		add(loadingBar);
