@@ -181,9 +181,10 @@ class Main extends Sprite
 			initialState = SinnerState;
 			skipSplash = true;
 		}else{
-		#if(openfl < "9.2.0")
-			@:privateAccess
-			FlxG.initSave();
+		        @:privateAccess
+			FlxG.initSave(); //不要存档了是吧？ --qqqeb
+			#if(openfl < "9.2.0")
+			
 
 			//// Readjust the window size for larger screens 
 			var scaleFactor:Int = Math.ceil((screenWidth > screenHeight) ? (screenHeight / gameHeight) : (screenWidth / gameWidth));
