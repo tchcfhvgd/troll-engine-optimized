@@ -116,7 +116,10 @@ class ComboOffsetSubstate extends MusicBeatSubstate
         updateComboPos();
         updateTimingPos();
         
-        super.create();
+        addTouchPad("NONE", "B");
+	addTouchPadCamera();
+	    
+	super.create();
     }
 
     ////
