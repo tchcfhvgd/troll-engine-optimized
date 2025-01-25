@@ -209,6 +209,8 @@ class OptionsSubstate extends MusicBeatSubstate
 			case 'customizeColours':
 				// TODO: check the note colours once you exit to see if any changed
 				openSubState(ClientPrefs.noteSkin == "Quants" ? new options.QuantNotesSubState() : new options.NotesSubState());
+			case 'MobileControlSelectSubState':
+		 openSubState(new mobile.MobileControlSelectSubState());
 			case 'customizeKeybinds':
 				var substate = new NewBindsSubstate();
 				var currentBinds:Map<String, Array<FlxKey>> = [];
@@ -427,6 +429,17 @@ class OptionsSubstate extends MusicBeatSubstate
 					]
 				]
 			] */
+			"Mobile" => [
+			[
+				"Mobile Options",
+				[
+					"controlsAlpha",
+					"hitboxPos",
+					"hitboxType",
+					"MobileControlSelectSubState"
+				]
+			]
+		],
 	];
 
 	static var optionOrder:Array<String> = [
