@@ -1061,14 +1061,7 @@ class OptionsSubstate extends MusicBeatSubstate
 
 				if (!widget.locked)
 				{
-					if (FlxG.mouse.justPressed)
-					{
-						if (overlaps(optBox))
-						{
-							checkbox.toggled = !checkbox.toggled;
-							changeToggleW(widget, checkbox.toggled);
-						}
-					}
+		
 				}
 
 				text.text = checkbox.toggled ? "on" : "off";
