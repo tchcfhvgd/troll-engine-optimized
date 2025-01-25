@@ -230,5 +230,72 @@ class Main extends Sprite
 			bread.visible = false;
 			addChild(bread);
 		}
+	#if sys
+		// Original code was made by sqirra-rng, big props to them!!!
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(
+			UncaughtErrorEvent.UNCAUGHT_ERROR, 
+			(event:UncaughtErrorEvent)->{
+				onCrash(event.error);
+			}
+		);
+
+
+		#if cpp
+		// Thank you EliteMasterEric, very cool!
+		untyped __global__.__hxcpp_set_critical_error_handler(onCrash);
+		#end
+		#end
 	}
+
+	
+	#if sys
+	function onCrash(errorName:String):Void
+	{
+		////
+		var ogTrace = haxe.Log.trace;
+		haxe.Log.trace = (msg, ?pos)->{
+			ogTrace(msg, null);
+		}
+
+		////
+		trace("\nCall stack starts below");
+
+		var callstack:String = "";
+
+		for (stackItem in CallStack.exceptionStack(true))
+		{
+			switch (stackItem)
+			{
+				case FilePos(s, file, line, column):
+					callstack += '$file:$line\n';
+				default:
+			}
+		}
+
+		callstack += '\n$errorName';
+
+		trace('\n$callstack\n');
+
+		#if (windows && cpp)
+		windows_showErrorMsgBox(callstack, errorName);
+		#else
+		Application.current.window.alert(callstack, errorName);
+		#end
+
+		#if discord_rpc
+		DiscordClient.shutdown(true);
+		#end
+
+		#if sys
+		File.saveContent("crash.txt", callstack);
+		Sys.exit(1);
+		#end
+	}
+
+	#if (windows && cpp)
+	@:functionCode('MessageBox(NULL, message, title, MB_ICONERROR | MB_OK);')
+	function windows_showErrorMsgBox(message:String, title:String){}
+	#end
+
+	#end
 }
