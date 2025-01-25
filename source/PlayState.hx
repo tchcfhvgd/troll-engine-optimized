@@ -53,6 +53,10 @@ import Discord.DiscordClient;
 #end
 #end
 
+import mobile.TouchButton;
+import mobile.TouchPad;
+import mobile.input.MobileInputID;
+
 using StringTools;
 
 /*
@@ -1023,6 +1027,14 @@ class PlayState extends MusicBeatState
 		notes.cameras = cH;
 
 		// EVENT AND NOTE SCRIPTS WILL GET LOADED HERE
+		
+		#if !android
+		addTouchPad("NONE", "P");
+		addTouchPadCamera();
+		touchPad.visible = true;
+		#end
+		addMobileControls();
+		
 		generateSong(SONG.song);
 
 		#if discord_rpc
@@ -1460,7 +1472,7 @@ class PlayState extends MusicBeatState
 		}
 		#end
 		
-		startedCountdown = true;
+		startedCountdown = mobileControls.instance.visible = true;
 		setOnScripts('startedCountdown', true);
 		callOnScripts('onCountdownStarted');
 		if (hudSkinScript != null)
@@ -2787,7 +2799,7 @@ class PlayState extends MusicBeatState
 				doGameOver();
 			}else if (doDeathCheck()){
 				// die lol
-			}else if (controls.PAUSE)
+			}else if (controls.PAUSE || #if android FlxG.android.justReleased.BACK #else touchPad.buttonP.justPressed #end)
 				pause();
 		}
 
@@ -3398,6 +3410,8 @@ class PlayState extends MusicBeatState
 
 		deathCounter = 0;
 		seenCutscene = false;
+		
+		mobileControls.instance.visible = #if !android touchPad.visible = #end false;
 
 		#if ACHIEVEMENTS_ALLOWED
 		if(achievementObj != null) {
@@ -4013,7 +4027,7 @@ class PlayState extends MusicBeatState
 		}
 		return -1;
 	}
-
+	
 	// Hold notes
 	public static var pressedGameplayKeys:Array<Bool> = [];
 
