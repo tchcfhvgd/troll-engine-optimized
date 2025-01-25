@@ -201,6 +201,7 @@ class FunkinHScript extends FunkinScript
 
 		set("Character", Character);
 		set("HealthIcon", HealthIcon);
+		set("FNFHealthBar", FNFHealthBar);
 
 		set("Wife3", PlayState.Wife3);
 
