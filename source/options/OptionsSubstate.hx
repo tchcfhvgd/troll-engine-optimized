@@ -1219,12 +1219,12 @@ class OptionsSubstate extends MusicBeatSubstate
 				bar.y = box.y + 4;
 			case Button:
 				if (!widget.locked)
-				#if !mobile
 				{
+					#if !mobile
 					if (FlxG.mouse.justPressed && overlaps(optBox))
 						onButtonPressed(widget.optionData.data.get("optionName"));
+				    #end
 				}
-				#end
 		}
 	}
 
@@ -1740,9 +1740,10 @@ class WidgetButton extends WidgetSprite
 						onPressed();
 				}
 			}
-			}
-				if (whilePressed != null)
+			
+			if (whilePressed != null)
 					whilePressed();
+		}
 		super.update(elapsed);
 	}
 }
