@@ -76,6 +76,7 @@ class NotesSubState extends MusicBeatSubstate
 		cameras = [daCam];
 
 		addTouchPad("LEFT_FULL", "A_B_C");
+		addTouchPadCamera();
 	}
 
 	var changingNote:Bool = false;
