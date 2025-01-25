@@ -42,6 +42,54 @@ class ClientPrefs
 	inline public static function getOptionDefinitions():Map<String, OptionData>
 	{
 		return [
+			// Mobile and Mobile Controls Releated
+			"extraButtons" => {
+				display: "Extra Controls",
+				desc: "Select how many extra buttons you prefer to have?\nThey can be used for mechanics with LUA or HScript.",
+				type: Dropdown,
+				value: "NONE",
+				data: ["options" => ["NONE", "SINGLE", "DOUBLE"]]
+			},
+			"hitboxPos" => {
+				display: "Hitbox Position",
+				desc: "'If checked, the hitbox will be put at the bottom of the screen, otherwise will stay at the top.",
+				type: Toggle,
+				value: true,
+				data: []
+			},
+			"controlsAlpha" => {
+				display: "Mobile Controls Opacity",
+				desc: "Selects the opacity for the mobile buttons (careful not to put it at 0 and lose track of your buttons).",
+				type: Number,
+				value: 60,
+				data: [
+					"suffix" => "%",
+					"min" => 0,
+					"max" => 100,
+					"step" => 10,
+					"type" => "percent" // saved value is value / 100
+				]
+			},
+			"storageType" => {
+				display: "Storage Type",
+				desc: "Which folder Psych Engine should use?\n(CHANGING THIS MAKES DELETE YOUR OLD FOLDER!!",
+				type: Dropdown,
+				value: "EXTERNAL_DATA",
+				data: ["options" => ["EXTERNAL_DATA", "EXTERNAL_OBB", "EXTERNAL_MEDIA", "EXTERNAL", "EXTERNAL_GLOBAL"]]
+			},
+			"hitboxType" => {
+				display: "Hitbox Design",
+				desc: "Choose how your hitbox should look like.",
+				type: Dropdown,
+				value: "Gradient",
+				data: ["options" => ["No Gradient", "No Gradient (Old)", "Gradient", "Hidden"]]
+			},
+			"MobileControlSelectSubState" => {
+				display: "Mobile Control",
+				desc: "change the mobileControl",
+				type: Button,
+				data: []
+			},
 			// gameplay
 			"controllerMode" => {
 				display: "Controller Mode",
@@ -620,16 +668,6 @@ class ClientPrefs
 		'botplay' => false,
 		'opponentplay' => false
 	];
-
-        // Mobile and Mobile Controls Releated
-	public static var extraButtons:String = "NONE"; // mobile extra button option
-	public static var hitboxPos:Bool = true; // hitbox extra button position option
-	public static var controlsAlpha:Float = FlxG.onMobile ? 0.6 : 0;
-	public static var screensaver:Bool = false;
-	#if android
-	public static var storageType:String = "EXTERNAL_DATA";
-	#end
-	public static var hitboxType:String = "Gradient";
 
 	inline public static function getGameplaySetting(name:String, defaultValue:Dynamic):Dynamic
 	{
