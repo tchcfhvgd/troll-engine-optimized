@@ -51,7 +51,7 @@ jobs:
           haxelib install flixel-ui 2.5.0
           haxelib install flixel-addons 3.1.1
           haxelib install hxvlc 1.6.1
-          haxelib git hscript https://github.com/HaxeFoundation/hscript
+          haxelib git hscript https://github.com/nebulazorua/t-hscript
           haxelib git linc_luajit https://github.com/MobilePorting/linc_luajit
           haxelib git extension-androidtools https://github.com/MAJigsaw77/extension-androidtools
           haxelib install hxcpp-debug-server
