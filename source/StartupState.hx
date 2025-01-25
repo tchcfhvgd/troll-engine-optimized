@@ -56,6 +56,7 @@ class StartupState extends FlxTransitionableState
 
 		ClientPrefs.initialize();
 		ClientPrefs.load();
+		mobile.MobileData.init();
 
 		FlxG.sound.volumeHandler = function(vol:Float)
             {
