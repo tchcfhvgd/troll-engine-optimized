@@ -268,6 +268,7 @@ class NewBindsSubstate extends MusicBeatSubstate  {
 		add(selectionArrow);
 
 		addTouchPad("LEFT_FULL", "A_B");
+		addTouchPadCamera();
 	}
 
 	override function destroy()
