@@ -201,12 +201,6 @@ class OptionsSubstate extends MusicBeatSubstate
 	{
 		switch (option)
 		{
-			case 'customizeHUD':
-				if((FlxG.state is OptionsState))
-					LoadingState.loadAndSwitchState(new options.NoteOffsetState());
-				else if (FlxG.state is PlayState)
-					openSubState(new options.ComboOffsetSubstate());
-	removeTouchPad();
 			case 'customizeColours':
 				// TODO: check the note colours once you exit to see if any changed
 				openSubState(ClientPrefs.noteSkin == "Quants" ? new options.QuantNotesSubState() : new options.NotesSubState());
@@ -377,7 +371,6 @@ class OptionsSubstate extends MusicBeatSubstate
 					"hitbar", 
 					"judgeCounter", 
 					'hudPosition', 
-					"customizeHUD",
 				]
 			],
 			[
@@ -752,6 +745,7 @@ class OptionsSubstate extends MusicBeatSubstate
 		super.closeSubState();
 		removeTouchPad();
 		addTouchPad("LEFT_FULL", "A_B");
+		addTouchPadCamera();
 	}
 
 	function createWidget(name:String, drop:FlxSprite, text:FlxText, data:OptionData):Widget
@@ -1085,6 +1079,7 @@ class OptionsSubstate extends MusicBeatSubstate
 
 				if (!widget.locked)
 				{
+					#if !mobile
 					if (FlxG.mouse.justPressed)
 					{
 						var interacted:Bool = false;
@@ -1125,6 +1120,7 @@ class OptionsSubstate extends MusicBeatSubstate
 								openedDropdown = null;
 						}
 					}
+					#end
 				}
 				else if (openedDropdown == widget)
 					openedDropdown = null;
@@ -1183,6 +1179,7 @@ class OptionsSubstate extends MusicBeatSubstate
 				var newVal = oldVal;
 				if (!widget.locked)
 				{
+					#if !mobile
 					if (FlxG.mouse.justPressed && overlaps(box) || FlxG.mouse.pressed && scrubbingBar == bar)
 					{
 						scrubbingBar = bar;
@@ -1191,6 +1188,7 @@ class OptionsSubstate extends MusicBeatSubstate
 						var value = FlxMath.lerp(min, max, localX / bar.frameWidth);
 						newVal = value;
 					}
+					#end
 				}
 				if (newVal < min)
 					newVal = min;
@@ -1221,10 +1219,12 @@ class OptionsSubstate extends MusicBeatSubstate
 				bar.y = box.y + 4;
 			case Button:
 				if (!widget.locked)
+				#if !mobile
 				{
 					if (FlxG.mouse.justPressed && overlaps(optBox))
 						onButtonPressed(widget.optionData.data.get("optionName"));
 				}
+				#end
 		}
 	}
 
@@ -1552,7 +1552,7 @@ class OptionsSubstate extends MusicBeatSubstate
 							changeNumber(optionName, defaultValue, true);
 							doUpdate = true;
 						}
-						if (controls.UI_LEFT || controls.UI_RIGHT || FlxG.mouse.pressed){
+						if (controls.UI_LEFT || controls.UI_RIGHT){
 							doUpdate = true;
 						}
 
@@ -1581,26 +1581,12 @@ class OptionsSubstate extends MusicBeatSubstate
 				}
 			}
 
-			if (FlxG.mouse.released)
-				scrubbingBar = null;
-			else if (FlxG.mouse.justPressed)
-			{
-				for (idx in 0...optionOrder.length)
-				{
-					if (FlxG.mouse.overlaps(buttons[idx], mainCamera))
-					{
-						changeCategory(idx, true);
-						pHov = null;
-						break;
-					}
-				}
-			}
-
 			var movedMouse = Math.abs(FlxG.mouse.wheel) + Math.abs(FlxG.mouse.screenX - prevScreenX) + Math.abs(FlxG.mouse.screenY - prevScreenY) != 0;
 			if (movedMouse) FlxG.mouse.visible = true;
 			prevScreenX = FlxG.mouse.screenX;
 			prevScreenY = FlxG.mouse.screenY;
 
+			#if !mobile
 			if (pHov == null || doUpdate || movedMouse || FlxG.mouse.justPressed || forceWidgetUpdate)
 			{
 				for (object => widget in currentWidgets)
@@ -1616,6 +1602,7 @@ class OptionsSubstate extends MusicBeatSubstate
 				}
 				forceWidgetUpdate = false;
 			}
+			#end
 
 			if (curWidget == null){
 				showOptionDesc(null);
@@ -1725,6 +1712,7 @@ class WidgetButton extends WidgetSprite
 		{
 			pressedTime = 0;
 			repeatingTime = 0;
+			#if !mobile
 			if (FlxG.mouse.justPressed)
 			{
 				for (camera in cameras)
@@ -1736,6 +1724,7 @@ class WidgetButton extends WidgetSprite
 					}
 				}
 			}
+			#end
 		}
 		else
 		{
@@ -1751,16 +1740,9 @@ class WidgetButton extends WidgetSprite
 						onPressed();
 				}
 			}
-			if (FlxG.mouse.justReleased)
-			{
-				release();
 			}
-			else
-			{
 				if (whilePressed != null)
 					whilePressed();
-			}
-		}
 		super.update(elapsed);
 	}
 }
