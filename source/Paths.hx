@@ -665,7 +665,7 @@ class Paths
 		var sound:Null<Sound> = currentTrackedSounds.get(gottenPath);
 		if (sound == null){
 			#if !html
-			sound = Sound.fromFile('./' + gottenPath);
+			sound = Sound.fromFile(gottenPath);
 			#else
 			sound = Assets.getSound(/*(path == 'songs' ? 'songs:' : '') +*/ gottenPath);
 			#end
@@ -718,10 +718,10 @@ class Paths
 
 	public static var modsList:Array<String> = [];
 	#if MODS_ALLOWED
-	static final modFolderPath:String = #if mobile Sys.getCwd() + #end "content/";
+	static final modFolderPath:String = "content/";
 
 	inline static public function mods(key:String = '')
-		return modFolderPath + key;
+		return #if mobile Sys.getCwd() + #end modFolderPath + key;
 
 	inline static public function modsFont(key:String)
 		return modFolders('fonts/' + key);
