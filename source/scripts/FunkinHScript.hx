@@ -510,6 +510,18 @@ class HScriptState extends MusicBeatState
 			});
 			variables.set("controls", PlayerSettings.player1.controls);
 
+			#if mobile
+			variables.set("addTouchPad", function(DPad:String, Action:String){
+				addTouchPad(DPad, Action);
+				});
+				variables.set("addTouchPadCamera", function(defaultDrawTarget:Bool = false){
+				addTouchPadCamera(defaultDrawTarget);
+				});
+				variables.set("removeTouchPad", function(){
+				removeTouchPad();
+				});
+			#end
+
 			if (additionalVars != null)
 			{
 				for (key in additionalVars.keys())
@@ -781,6 +793,18 @@ class HScriptSubstate extends MusicBeatSubstate
 			});
 			variables.set("controls", PlayerSettings.player1.controls);
 			variables.set("close", close);
+
+			#if mobile
+			variables.set("addTouchPad", function(DPad:String, Action:String){
+				addTouchPad(DPad, Action);
+				});
+				variables.set("addTouchPadCamera", function(defaultDrawTarget:Bool = false){
+				addTouchPadCamera(defaultDrawTarget);
+				});
+				variables.set("removeTouchPad", function(){
+				removeTouchPad();
+				});
+				#end
 
 			if (additionalVars != null)
 			{
