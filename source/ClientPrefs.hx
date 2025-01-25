@@ -95,7 +95,7 @@ class ClientPrefs
 				display: "Controller Mode",
 				desc: "When toggled, lets you play the game with a controller instead.",
 				type: Toggle,
-				value: false,
+				value: true,
 				data: []
 			},
 			"ghostTapping" => {
