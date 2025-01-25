@@ -206,11 +206,14 @@ class OptionsSubstate extends MusicBeatSubstate
 					LoadingState.loadAndSwitchState(new options.NoteOffsetState());
 				else if (FlxG.state is PlayState)
 					openSubState(new options.ComboOffsetSubstate());
+	removeTouchPad();
 			case 'customizeColours':
 				// TODO: check the note colours once you exit to see if any changed
 				openSubState(ClientPrefs.noteSkin == "Quants" ? new options.QuantNotesSubState() : new options.NotesSubState());
+	removeTouchPad();
 			case 'MobileControlSelectSubState':
 		 openSubState(new mobile.MobileControlSelectSubState());
+		 removeTouchPad();
 			case 'customizeKeybinds':
 				var substate = new NewBindsSubstate();
 				var currentBinds:Map<String, Array<FlxKey>> = [];
@@ -232,6 +235,7 @@ class OptionsSubstate extends MusicBeatSubstate
 						changed.push(daId);
 				}
 				openSubState(substate);
+ removeTouchPad();
 			default:
 				// nothing
 		}
@@ -429,7 +433,7 @@ class OptionsSubstate extends MusicBeatSubstate
 					]
 				]
 			] */
-			"Mobile" => [
+			"mobile" => [
 			[
 				"Mobile Options",
 				[
@@ -447,6 +451,7 @@ class OptionsSubstate extends MusicBeatSubstate
 		"ui",
 		"video",
 		"controls",
+		"mobile",
 		#if (discord_rpc || DO_AUTO_UPDATE) "misc", #end 
 		/* "Accessibility" */
 	];
@@ -736,8 +741,16 @@ class OptionsSubstate extends MusicBeatSubstate
 
 		checkWindows();
 
+		addTouchPad("LEFT_FULL", "A_B");
+		
 		super.create();
 		//trace('OptionState creation took ${Sys.cpuTime() - startTime} seconds.');
+	}
+	
+	override function closeSubState() {
+		super.closeSubState();
+		removeTouchPad();
+		addTouchPad("LEFT_FULL", "A_B");
 	}
 
 	function createWidget(name:String, drop:FlxSprite, text:FlxText, data:OptionData):Widget
@@ -1480,11 +1493,11 @@ class OptionsSubstate extends MusicBeatSubstate
 				pHov = null;
 			}
 
-			if (FlxG.keys.justPressed.UP){
+			if (controls.UI_UP_P){
 				FlxG.sound.play(Paths.sound("scrollMenu"));
 				changeWidget(-1);
 			}
-			if (FlxG.keys.justPressed.DOWN){
+			if (controls.UI_DOWN_P){
 				FlxG.sound.play(Paths.sound("scrollMenu"));
 				changeWidget(1);
 			}
@@ -1494,7 +1507,7 @@ class OptionsSubstate extends MusicBeatSubstate
 
 				switch (curWidget.type){
 					case Toggle:
-						if (FlxG.keys.justPressed.ENTER){
+						if (controls.ACCEPT){
 							var checkbox:Checkbox = curWidget.data.get("checkbox");
 							checkbox.toggled = !checkbox.toggled;
 							changeToggle(optionName, checkbox.toggled);
@@ -1509,7 +1522,7 @@ class OptionsSubstate extends MusicBeatSubstate
 						}
 						
 					case Button:
-						if (FlxG.keys.justPressed.ENTER){
+						if (controls.ACCEPT){
 							onButtonPressed(optionName);
 							doUpdate = true;
 						}
@@ -1518,19 +1531,19 @@ class OptionsSubstate extends MusicBeatSubstate
 						// ;_;	
 						var data = curWidget.data;
 
-						if (FlxG.keys.justPressed.LEFT)	{
+						if (controls.UI_LEFT_P)	{
 							if (FlxG.keys.pressed.SHIFT)	changeNumber(optionName, data.get("min"), true);
 							else							data.get("leftAdjust").press();
 						}
-						else if (FlxG.keys.justReleased.LEFT) {
+						else if (controls.UI_LEFT_R) {
 							data.get("leftAdjust").release();
 						}		
 
-						if (FlxG.keys.justPressed.RIGHT) {
+						if (controls.UI_RIGHT_P) {
 							if (FlxG.keys.pressed.SHIFT)	changeNumber(optionName, data.get("max"), true);
 							else							data.get("rightAdjust").press();
 						}
-						else if (FlxG.keys.justReleased.RIGHT) {
+						else if (controls.UI_RIGHT_R) {
 							data.get("rightAdjust").release();
 						}
 
@@ -1545,14 +1558,14 @@ class OptionsSubstate extends MusicBeatSubstate
 							changeNumber(optionName, defaultValue, true);
 							doUpdate = true;
 						}
-						if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.RIGHT || FlxG.mouse.pressed){
+						if (controls.UI_LEFT || controls.UI_RIGHT || FlxG.mouse.pressed){
 							doUpdate = true;
 						}
 
 					case Dropdown:
 						var change = 0;
-						if (FlxG.keys.justPressed.LEFT) change--;
-						if (FlxG.keys.justPressed.RIGHT) change++;
+						if (controls.UI_LEFT_P) change--;
+						if (controls.UI_RIGHT_P) change++;
 
 						if (change != 0){
 							var sowy = actualOptions.get(optionName);
