@@ -46,7 +46,8 @@
 	<classpath path="source" />
 	
 	<assets path="assets"/>
-	<assets path='example_content'	rename='content'	embed='false' />
+	<assets path='default_content'	rename='content'	embed='false' />
+	<assets path="flixel" embed="true"/> <!-- To override some Flixel assets -->
 
     <!-- TROLL ENGINE CUSTOMIZATION -->
 	<define name="USE_EPIC_JUDGEMENT" />
@@ -141,6 +142,11 @@
 
     <!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
+
+	<icon path="art/iconOG.png" />
+	<icon path="art/icon64.png" size='64'/>
+	<icon path="art/icon32.png" size='32'/>
+	<icon path="art/icon16.png" size='16'/>
 
     <!--
 	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
