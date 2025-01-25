@@ -11,6 +11,7 @@ import flixel.math.FlxMath;
 import lime.app.Application;
 import hscript.*;
 import scripts.Globals.*;
+import flixel.group.FlxGroup;
 
 using StringTools;
 
@@ -102,6 +103,9 @@ class FunkinHScript extends FunkinScript
 		set("FlxTween", flixel.tweens.FlxTween);
 		set("FlxEase", flixel.tweens.FlxEase);
 		set("FlxGroup", flixel.group.FlxGroup);
+		set("FlxObject", flixel.FlxObject);
+		set("FlxTypedGroup", FlxTypedGroup);
+		set("FlxSpriteGroup", flixel.group.FlxSpriteGroup);
 		set("FlxSave", flixel.util.FlxSave); // should probably give it 1 save instead of giving it FlxSave
 		set("FlxBar", flixel.ui.FlxBar);
 
