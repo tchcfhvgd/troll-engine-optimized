@@ -24,6 +24,7 @@ import flixel.util.FlxDestroyUtil;
 #end
 class MusicBeatSubstate extends FlxSubState
 {
+	public static var instance:MusicBeatSubstate;
 	public var script:FunkinHScript;
 
 	private var lastBeat:Float = 0;
