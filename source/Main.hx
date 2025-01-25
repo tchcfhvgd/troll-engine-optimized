@@ -18,7 +18,7 @@ using StringTools;
 import Discord.DiscordClient;
 #end
 
-#if CRASH_HANDLER
+#if sys
 import haxe.CallStack;
 import openfl.events.UncaughtErrorEvent;
 #end
