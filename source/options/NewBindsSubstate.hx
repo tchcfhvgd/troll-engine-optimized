@@ -266,6 +266,8 @@ class NewBindsSubstate extends MusicBeatSubstate  {
 		selectionArrow.visible = false;
 		selectionArrow.cameras = [scrollableCam];
 		add(selectionArrow);
+
+		addTouchPad("LEFT_FULL", "A_B");
 	}
 
 	override function destroy()
@@ -293,21 +295,21 @@ class NewBindsSubstate extends MusicBeatSubstate  {
 			var updateKeyboard = false;
 			var prevY = keyboardY; // to unhighlight text
 
-			if (FlxG.keys.justPressed.UP){
+			if (controls.UI_UP_P){
 				if (wasKeyboarding) keyboardY--;
 				updateKeyboard = true;
 			}
-			if (FlxG.keys.justPressed.DOWN)
+			if (controls.UI_DOWN_P)
 			{
 				if (wasKeyboarding) keyboardY++;
 				updateKeyboard = true;
 			}
-			if (FlxG.keys.justPressed.LEFT)
+			if (controls.UI_LEFT_P)
 			{
 				if (wasKeyboarding) keyboardX--;
 				updateKeyboard = true;
 			}
-			if (FlxG.keys.justPressed.RIGHT)
+			if (controls.UI_RIGHT_P)
 			{
 				if (wasKeyboarding) keyboardX++;
 				updateKeyboard = true;
