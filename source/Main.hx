@@ -96,8 +96,6 @@ class Main extends Sprite
 		Sys.setCwd(StorageUtil.getStorageDirectory());
 		#end
 
-		CrashHandler.init();
-
 		#if windows
 		@:functionCode("
 		#include <windows.h>
