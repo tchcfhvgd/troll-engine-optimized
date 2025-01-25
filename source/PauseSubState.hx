@@ -38,6 +38,7 @@ class PauseSubState extends MusicBeatSubstate
 			{
 				this.persistentDraw = false;
 				this.openSubState(new GameplayChangersSubstate());
+				removeTouchPad();
 			},
 			'Options' => () ->
 			{
@@ -79,6 +80,7 @@ class PauseSubState extends MusicBeatSubstate
 					cameras = [cam];
 				};
 				openSubState(daSubstate);
+	                        removeTouchPad();
 			},
 			"Resume" => this.close,
 			"Restart Song" => () ->
@@ -306,6 +308,9 @@ class PauseSubState extends MusicBeatSubstate
 		cameras = [cam];
 
 		PlayState.instance.callOnScripts('paused');
+
+                addTouchPad(PlayState.chartingMode ? "LEFT_FULL" : "UP_DOWN", "A");
+		addTouchPadCamera();
 	}
 
 	var holdTime:Float = 0;
@@ -482,5 +487,12 @@ class PauseSubState extends MusicBeatSubstate
 	function updateSkipTimeText()
 	{
 		skipTimeText.text = FlxStringUtil.formatTime(Math.max(0, Math.floor(curTime / 1000)), false) + ' / ' + FlxStringUtil.formatTime(Math.max(0, Math.floor(PlayState.instance.songLength / 1000)), false);
+	}
+
+        override function closeSubState() {
+		super.closeSubState();
+		removeTouchPad();
+		addTouchPad(PlayState.chartingMode ? "LEFT_FULL" : "UP_DOWN", "A");
+		addTouchPadCamera();
 	}
 }
