@@ -152,6 +152,8 @@ class MainMenuState extends MusicBeatState
 		}
 
 		Paths.clearUnusedMemory();
+
+		addTouchPad("UP_DOWN", "A_B");
 	}
 
 	#if ACHIEVEMENTS_ALLOWED
