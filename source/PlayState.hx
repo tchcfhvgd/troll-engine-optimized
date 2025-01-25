@@ -1034,6 +1034,9 @@ class PlayState extends MusicBeatState
 		touchPad.visible = true;
 		#end
 		addMobileControls();
+		mobileControls.onButtonDown.add(onButtonPress);
+		mobileControls.onButtonUp.add(onButtonRelease);
+		
 		
 		generateSong(SONG.song);
 
@@ -4026,6 +4029,103 @@ class PlayState extends MusicBeatState
 			}
 		}
 		return -1;
+	}
+	
+	private function onButtonPress(button:TouchButton):Void
+	{
+		if (button.IDs.filter(id -> id.toString().startsWith("EXTRA")).length > 0)
+			return;
+
+		var buttonCode:Int = (button.IDs[0].toString().startsWith('NOTE')) ? button.IDs[0] : button.IDs[1];
+		
+		if (paused || !startedCountdown || inCutscene)
+			return;
+
+
+		if (pressed.contains(buttonCode))
+            return;
+        pressed.push(buttonCode);
+
+        if (callOnScripts("onKeyDown", [button]) == Globals.Function_Stop)
+            return;
+
+		if (buttonCode > -1){
+			var hitNotes:Array<Note> = [];
+            var controlledFields:Array<PlayField> = [];
+
+			if(strumsBlocked[buttonCode]) return;
+            
+			if (callOnScripts("onKeyPress", [button]) == Globals.Function_Stop)
+				return;
+        
+			for(field in playfields.members){
+				if(!field.autoPlayed && field.isPlayer && field.inControl){
+                    controlledFields.push(field);
+					field.keysPressed[buttonCode] = true;
+					if(generatedMusic && !endingSong){
+                        var note:Note = null;
+                        var ret:Dynamic = callOnHScripts("onFieldInput", [field, buttonCode, hitNotes]);
+						if (ret == Globals.Function_Stop)
+							continue;
+                        else if((ret is Note))
+                            note = ret;
+                        else
+						    note = field.input(buttonCode);
+
+						if(note==null){
+							var spr:StrumNote = field.strumNotes[buttonCode];
+							if (spr != null && spr.animation.curAnim.name != 'confirm')
+							{
+								spr.playAnim('pressed');
+								spr.resetAnim = 0;
+							}
+						}else
+							hitNotes.push(note);
+                        
+
+					}
+				}
+			}
+			if (hitNotes.length==0 && controlledFields.length > 0){
+				callOnScripts('onGhostTap', [buttonCode]);
+				
+				if (!ClientPrefs.ghostTapping)
+					noteMissPress(buttonCode);
+			}
+		}
+	}
+	private function onButtonRelease(button:TouchButton):Void
+	{
+	    if (button.IDs.filter(id -> id.toString().startsWith("EXTRA")).length > 0)
+			return;
+
+		var buttonCode:Int = (button.IDs[0].toString().startsWith('NOTE')) ? button.IDs[0] : button.IDs[1];
+		if(pressed.contains(buttonCode))pressed.remove(buttonCode);
+        
+        if (callOnScripts("onKeyUp", [button]) == Globals.Function_Stop)
+            return;
+
+		if(startedCountdown && buttonCode > -1)
+		{
+			// doesnt matter if THIS is done while paused
+			// only worry would be if we implemented Lifts
+			// but afaik we arent doing that
+			// (though could be interesting to add)
+			for(field in playfields.members){
+				if (field.inControl && !field.autoPlayed && field.isPlayer)
+				{
+					field.keysPressed[buttonCode] = false;
+					var spr:StrumNote = field.strumNotes[key];
+					if (spr != null)
+					{
+						spr.playAnim('static');
+						spr.resetAnim = 0;
+					}
+				}
+			}
+			callOnScripts('onKeyRelease', [buttonCode]);
+		}
+		//trace('released: ' + controlArray);
 	}
 	
 	// Hold notes
