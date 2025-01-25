@@ -49,14 +49,6 @@ class MusicBeatState extends FlxUIState
         this.canBeScripted = canBeScripted;
     }
 
-	override public function destroy(){
-		removeTouchPad();
-		removeMobileControls();
-		
-		if (script != null) script.stop();
-		return super.destroy();
-	}
-
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
@@ -136,6 +128,14 @@ class MusicBeatState extends FlxUIState
 			FlxG.cameras.add(touchPadCam, defaultDrawTarget);
 			touchPad.cameras = [touchPadCam];
 		}
+	}
+
+	override public function destroy(){
+		removeTouchPad();
+		removeMobileControls();
+		
+		if (script != null) script.stop();
+		return super.destroy();
 	}
 	
 	override function create() {
