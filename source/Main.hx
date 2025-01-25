@@ -138,6 +138,7 @@ class Main extends Sprite
 
 	private function setupGame():Void
 	{
+		#if(openfl < "9.2.0")
 		final screenWidth = Capabilities.screenResolutionX;
 		final screenHeight = Capabilities.screenResolutionY;
 
@@ -153,6 +154,7 @@ class Main extends Sprite
 				gameHeight = Math.ceil(screenHeight / zoom);
 			}
 		}
+		#end
 	
 		////		
 		var troll = false;
@@ -179,6 +181,7 @@ class Main extends Sprite
 			initialState = SinnerState;
 			skipSplash = true;
 		}else{
+		#if(openfl < "9.2.0")
 			@:privateAccess
 			FlxG.initSave();
 
@@ -201,6 +204,7 @@ class Main extends Sprite
 			////
 			if (FlxG.save.data != null && FlxG.save.data.fullscreen != null)
 				startFullscreen = FlxG.save.data.fullscreen;
+			#end
 		}
 		
 		addChild(new FNFGame(gameWidth, gameHeight, #if (mobile && MODS_ALLOWED) !CopyState.checkExistingFiles() ? CopyState : #end initialState, #if(flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen));
