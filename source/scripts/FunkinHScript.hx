@@ -149,6 +149,17 @@ class FunkinHScript extends FunkinScript
 		set("getClass", Type.resolveClass);
 		set("getEnum", Type.resolveEnum);
 
+		set("addHaxeLibrary", function(c:String, ?p:String){
+			// Dumb hardcoded whatever idc!!!
+
+			
+
+			if(p != null)
+				importClass('$p.$c');
+			else
+				importClass(c);
+		});
+
 		set("importClass", importClass);
 		set("importEnum", importEnum);
 
