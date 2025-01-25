@@ -186,6 +186,7 @@ opt_tabName_video=Video
 opt_tabName_controls=Controls
 opt_tabName_updating=Updating
 opt_tabName_misc=Misc
+opt_tabName_mobile=Mobile
 controls_gameplay=Gameplay
 controls_ui=UI
 controls_misc=Misc.
