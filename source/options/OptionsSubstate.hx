@@ -434,7 +434,9 @@ class OptionsSubstate extends MusicBeatSubstate
 					"hitboxPos",
 					"hitboxType",
 					"MobileControlSelectSubState",
+					#if android
 					"storageType"
+					#end
 				]
 			]
 		],
@@ -474,6 +476,11 @@ class OptionsSubstate extends MusicBeatSubstate
 	var _point:FlxPoint = FlxPoint.get();
 	@:noCompletion
 	var _mousePoint:FlxPoint = FlxPoint.get();
+	
+	#if android
+	var externalPaths:Array<String> = StorageUtil.checkExternalPaths(true);
+	final lastStorageType:String = ClientPrefs.storageType;
+	#end
 
 	function overlaps(object:FlxObject, ?camera:FlxCamera)
 	{
@@ -1485,11 +1492,11 @@ class OptionsSubstate extends MusicBeatSubstate
 				pHov = null;
 			}
 
-			if (controls.UI_UP_P || touchPad.buttonUp.justPressed){
+			if (controls.UI_UP_P){
 				FlxG.sound.play(Paths.sound("scrollMenu"));
 				changeWidget(-1);
 			}
-			if (controls.UI_DOWN_P || touchPad.buttonDown.justPressed){
+			if (controls.UI_DOWN_P){
 				FlxG.sound.play(Paths.sound("scrollMenu"));
 				changeWidget(1);
 			}
@@ -1499,7 +1506,7 @@ class OptionsSubstate extends MusicBeatSubstate
 
 				switch (curWidget.type){
 					case Toggle:
-						if (controls.ACCEPT || touchPad.buttonA.justPressed){
+						if (controls.ACCEPT){
 							var checkbox:Checkbox = curWidget.data.get("checkbox");
 							checkbox.toggled = !checkbox.toggled;
 							changeToggle(optionName, checkbox.toggled);
@@ -1514,7 +1521,7 @@ class OptionsSubstate extends MusicBeatSubstate
 						}
 						
 					case Button:
-						if (controls.ACCEPT || touchPad.buttonA.justPressed){
+						if (controls.ACCEPT){
 							onButtonPressed(optionName);
 							doUpdate = true;
 						}
@@ -1523,19 +1530,19 @@ class OptionsSubstate extends MusicBeatSubstate
 						// ;_;	
 						var data = curWidget.data;
 
-						if (controls.UI_LEFT_P || touchPad.buttonLeft.justPressed)	{
+						if (controls.UI_LEFT_P)	{
 							if (FlxG.keys.pressed.SHIFT)	changeNumber(optionName, data.get("min"), true);
 							else							data.get("leftAdjust").press();
 						}
-						else if (controls.UI_LEFT_R || touchPad.buttonLeft.justReleased) {
+						else if (controls.UI_LEFT_R) {
 							data.get("leftAdjust").release();
 						}		
 
-						if (controls.UI_RIGHT_P || touchPad.buttonRight.justPressed) {
+						if (controls.UI_RIGHT_P) {
 							if (FlxG.keys.pressed.SHIFT)	changeNumber(optionName, data.get("max"), true);
 							else							data.get("rightAdjust").press();
 						}
-						else if (controls.UI_RIGHT_R || touchPad.buttonRight.justReleased) {
+						else if (controls.UI_RIGHT_R) {
 							data.get("rightAdjust").release();
 						}
 
@@ -1550,14 +1557,14 @@ class OptionsSubstate extends MusicBeatSubstate
 							changeNumber(optionName, defaultValue, true);
 							doUpdate = true;
 						}
-						if (controls.UI_LEFT || touchPad.buttonLeft.pressed || controls.UI_RIGHT || touchPad.buttonRight.pressed || FlxG.mouse.pressed){
+						if (controls.UI_LEFT || controls.UI_RIGHT || FlxG.mouse.pressed){
 							doUpdate = true;
 						}
 
 					case Dropdown:
 						var change = 0;
-						if (controls.UI_LEFT_P || touchPad.buttonLeft.justPressed) change--;
-						if (controls.UI_RIGHT_P || touchPad.buttonRight.justPressed) change++;
+						if (controls.UI_LEFT_P) change--;
+						if (controls.UI_RIGHT_P) change++;
 
 						if (change != 0){
 							var sowy = actualOptions.get(optionName);
@@ -1671,7 +1678,7 @@ class OptionsSubstate extends MusicBeatSubstate
 
 		if (subState == null)
 		{
-			if (controls.BACK || touchPad.buttonB.justPressed)
+			if (controls.BACK)
 			{
                 save();
 				FlxG.sound.play(Paths.sound('cancelMenu'));
@@ -1681,6 +1688,23 @@ class OptionsSubstate extends MusicBeatSubstate
 			}
 		} 
 	}
+	
+	#if android
+	function onStorageChange():Void
+	{
+		File.saveContent(lime.system.System.applicationStorageDirectory + 'storagetype.txt', ClientPrefs.storageType);
+
+		var lastStoragePath:String = StorageType.fromStrForce(lastStorageType) + '/';
+
+		try
+		{
+			if (ClientPrefs.storageType != "EXTERNAL")
+				Sys.command('rm', ['-rf', lastStoragePath]);
+		}
+		catch (e:haxe.Exception)
+			trace('Failed to remove last directory. (${e.message})');
+	}
+	#end
 
 	override function destroy()
 	{
@@ -1692,6 +1716,15 @@ class OptionsSubstate extends MusicBeatSubstate
 			val.put();
 
 		super.destroy();
+		
+		#if android
+		if (ClientPrefs.storageType != lastStorageType)
+		{
+			onStorageChange();
+			CoolUtil.showPopUp('Storage Type has been changed and you needed restart the game!!\nPress OK to close the game.', 'Notice!');
+			lime.system.System.exit(0);
+		}
+		#end
 	}
 }
 
