@@ -78,9 +78,13 @@ class PauseSubState extends MusicBeatSubstate
 					var cam:FlxCamera = FlxG.cameras.list[FlxG.cameras.list.length - 1];
 
 					cameras = [cam];
+					
+					removeTouchPad();
+		addTouchPad(PlayState.chartingMode ? "LEFT_FULL" : "UP_DOWN", "A");
+		addTouchPadCamera();
 				};
 				openSubState(daSubstate);
-	                        touchPad.active = touchPad.visible = false;
+	                        removeTouchPad();
 			},
 			"Resume" => this.close,
 			"Restart Song" => () ->
@@ -139,7 +143,7 @@ class PauseSubState extends MusicBeatSubstate
 	var prevTimeScale:Float;
 	override public function close(){
 		FlxG.timeScale = prevTimeScale;
-				
+		
 		super.close();
 	}
 
@@ -487,11 +491,6 @@ class PauseSubState extends MusicBeatSubstate
 	function updateSkipTimeText()
 	{
 		skipTimeText.text = FlxStringUtil.formatTime(Math.max(0, Math.floor(curTime / 1000)), false) + ' / ' + FlxStringUtil.formatTime(Math.max(0, Math.floor(PlayState.instance.songLength / 1000)), false);
-	}
-
-        override function closeSubState() {
-		super.closeSubState();
-		touchPad.active = touchPad.visible = true;
 	}
 
 }
