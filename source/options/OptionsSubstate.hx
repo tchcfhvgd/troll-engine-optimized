@@ -510,11 +510,9 @@ class OptionsSubstate extends MusicBeatSubstate
 
 	public var transCamera:FlxCamera = new FlxCamera();
 	
-    public static var instance:MusicBeatSubstate;
 	public var optState:Bool = false;
 	public function new(state:Bool=false){
 		optState=state;
-		instance = this;
 		super();
 	}
 
