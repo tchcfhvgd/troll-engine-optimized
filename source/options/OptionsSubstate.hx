@@ -1079,7 +1079,6 @@ class OptionsSubstate extends MusicBeatSubstate
 
 				if (!widget.locked)
 				{
-					#if !mobile
 					if (FlxG.mouse.justPressed)
 					{
 						var interacted:Bool = false;
@@ -1120,7 +1119,6 @@ class OptionsSubstate extends MusicBeatSubstate
 								openedDropdown = null;
 						}
 					}
-					#end
 				}
 				else if (openedDropdown == widget)
 					openedDropdown = null;
@@ -1179,7 +1177,6 @@ class OptionsSubstate extends MusicBeatSubstate
 				var newVal = oldVal;
 				if (!widget.locked)
 				{
-					#if !mobile
 					if (FlxG.mouse.justPressed && overlaps(box) || FlxG.mouse.pressed && scrubbingBar == bar)
 					{
 						scrubbingBar = bar;
@@ -1188,7 +1185,6 @@ class OptionsSubstate extends MusicBeatSubstate
 						var value = FlxMath.lerp(min, max, localX / bar.frameWidth);
 						newVal = value;
 					}
-					#end
 				}
 				if (newVal < min)
 					newVal = min;
@@ -1220,10 +1216,8 @@ class OptionsSubstate extends MusicBeatSubstate
 			case Button:
 				if (!widget.locked)
 				{
-					#if !mobile
 					if (FlxG.mouse.justPressed && overlaps(optBox))
 						onButtonPressed(widget.optionData.data.get("optionName"));
-				    #end
 				}
 		}
 	}
@@ -1552,7 +1546,7 @@ class OptionsSubstate extends MusicBeatSubstate
 							changeNumber(optionName, defaultValue, true);
 							doUpdate = true;
 						}
-						if (controls.UI_LEFT || controls.UI_RIGHT){
+						if (controls.UI_LEFT || controls.UI_RIGHT || FlxG.mouse.pressed){
 							doUpdate = true;
 						}
 
@@ -1578,6 +1572,21 @@ class OptionsSubstate extends MusicBeatSubstate
 						}
 
 						doUpdate=true; // wont fade in and out otherwise :T
+				}
+			}
+
+			if (FlxG.mouse.released)
+				scrubbingBar = null;
+			else if (FlxG.mouse.justPressed)
+			{
+				for (idx in 0...optionOrder.length)
+				{
+					if (FlxG.mouse.overlaps(buttons[idx], mainCamera))
+					{
+						changeCategory(idx, true);
+						pHov = null;
+						break;
+					}
 				}
 			}
 
@@ -1712,7 +1721,6 @@ class WidgetButton extends WidgetSprite
 		{
 			pressedTime = 0;
 			repeatingTime = 0;
-			#if !mobile
 			if (FlxG.mouse.justPressed)
 			{
 				for (camera in cameras)
@@ -1724,7 +1732,6 @@ class WidgetButton extends WidgetSprite
 					}
 				}
 			}
-			#end
 		}
 		else
 		{
@@ -1740,9 +1747,15 @@ class WidgetButton extends WidgetSprite
 						onPressed();
 				}
 			}
-			
-			if (whilePressed != null)
+			if (FlxG.mouse.justReleased)
+			{
+				release();
+			}
+			else
+			{
+				if (whilePressed != null)
 					whilePressed();
+			}
 		}
 		super.update(elapsed);
 	}
