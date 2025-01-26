@@ -1680,7 +1680,7 @@ class OptionsSubstate extends MusicBeatSubstate
 
 		if (subState == null)
 		{
-			if (controls.BACK || touchPad.buttonB.justPressed)
+			if (touchPad.buttonB.justPressed)
 			{
                 save();
 				FlxG.sound.play(Paths.sound('cancelMenu'));
