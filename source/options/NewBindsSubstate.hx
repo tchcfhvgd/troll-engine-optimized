@@ -387,6 +387,7 @@ class NewBindsSubstate extends MusicBeatSubstate  {
 			}
 			
 			////////
+			#if !mobile
 			if (FlxG.mouse.justPressed){
 				for (y => buttons in bindButtons){
 					for (x => butt in buttons){
@@ -401,6 +402,7 @@ class NewBindsSubstate extends MusicBeatSubstate  {
 						resetAllBinds();
 				}
 			}
+			#end
 
 			var movement:Float = -FlxG.mouse.wheel * 45;
 			var keySpeed = elapsed * 1200;
