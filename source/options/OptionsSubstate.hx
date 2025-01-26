@@ -441,7 +441,7 @@ class OptionsSubstate extends MusicBeatSubstate
 			] */
 			"mobile" => [
 			[
-				"Mobile Options",
+				"mobileoptions",
 				[
 					"controlsAlpha",
 					"hitboxPos",
