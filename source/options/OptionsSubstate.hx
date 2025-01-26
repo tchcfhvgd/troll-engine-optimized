@@ -433,7 +433,8 @@ class OptionsSubstate extends MusicBeatSubstate
 					"controlsAlpha",
 					"hitboxPos",
 					"hitboxType",
-					"MobileControlSelectSubState"
+					"MobileControlSelectSubState",
+					"storageType"
 				]
 			]
 		],
