@@ -2,7 +2,7 @@ package;
 
 class Bread extends openfl.display.Bitmap {
 	public function new() {
-		super(Paths.image("Garlic-Bread-PNG-Images").bitmap);
+		super();
 
 		onGameResize(FlxG.width, FlxG.height);
 		FlxG.signals.gameResized.add(onGameResize);
