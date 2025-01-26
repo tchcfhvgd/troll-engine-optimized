@@ -64,7 +64,6 @@ class OptionsSubstate extends MusicBeatSubstate
 	static public var recommendsRestart = _recommendsRestart.copy();
 
 	#if android
-	var storageTypes:Array<String> = ["EXTERNAL_DATA", "EXTERNAL_OBB", "EXTERNAL_MEDIA", "EXTERNAL", "EXTERNAL_GLOBAL"];
 	var externalPaths:Array<String> = StorageUtil.checkExternalPaths(true);
 	final lastStorageType:String = ClientPrefs.storageType;
 	#end
