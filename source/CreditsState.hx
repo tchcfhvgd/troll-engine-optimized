@@ -100,6 +100,8 @@ class CreditsState extends MusicBeatState
 
 		add(bg);
 
+		addTouchPad("UP_DOWN", "A_B");
+
 		#if tgt
 		var backdrops = new flixel.addons.display.FlxBackdrop(Paths.image('grid'));
 		backdrops.velocity.set(30, -30);
