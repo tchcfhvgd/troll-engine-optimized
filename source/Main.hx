@@ -75,7 +75,6 @@ class Main extends Sprite
 	    
 	////
 	public static var fpsVar:FPS;
-	public static var bread:Bread;
 	
 	public static function main():Void
 	{
@@ -161,7 +160,6 @@ class Main extends Sprite
 			switch(arg){
 				case "troll":
 					troll = true;
-					break;
 
 				case "songselect":
 					StartupState.nextState = SongSelectState;
