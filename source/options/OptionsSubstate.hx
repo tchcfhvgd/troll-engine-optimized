@@ -204,8 +204,10 @@ class OptionsSubstate extends MusicBeatSubstate
 			case 'customizeColours':
 				// TODO: check the note colours once you exit to see if any changed
 				openSubState(ClientPrefs.noteSkin == "Quants" ? new options.QuantNotesSubState() : new options.NotesSubState());
+				touchPad.active = touchPad.visible = false;
 			case 'MobileControlSelectSubState':
 		 openSubState(new mobile.MobileControlSelectSubState());
+		 touchPad.active = touchPad.visible = false;
 			case 'customizeKeybinds':
 				var substate = new NewBindsSubstate();
 				var currentBinds:Map<String, Array<FlxKey>> = [];
@@ -227,6 +229,7 @@ class OptionsSubstate extends MusicBeatSubstate
 						changed.push(daId);
 				}
 				openSubState(substate);
+				touchPad.active = touchPad.visible = false;
 			default:
 				// nothing
 		}
@@ -736,6 +739,11 @@ class OptionsSubstate extends MusicBeatSubstate
 		
 		super.create();
 		//trace('OptionState creation took ${Sys.cpuTime() - startTime} seconds.');
+	}
+	
+	override function closeSubState() {
+		super.closeSubState();
+		touchPad.active = touchPad.visible = true;
 	}
 
 	function createWidget(name:String, drop:FlxSprite, text:FlxText, data:OptionData):Widget
