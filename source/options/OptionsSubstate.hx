@@ -446,9 +446,6 @@ class OptionsSubstate extends MusicBeatSubstate
 					"hitboxPos",
 					"hitboxType",
 					"MobileControlSelectSubState",
-					#if android
-					"storageType"
-					#end
 				]
 			]
 		],
@@ -1695,23 +1692,6 @@ class OptionsSubstate extends MusicBeatSubstate
 			}
 		} 
 	}
-
-	#if android
-	function onStorageChange():Void
-	{
-		File.saveContent(lime.system.System.applicationStorageDirectory + 'storagetype.txt', ClientPrefs.storageType);
-
-		var lastStoragePath:String = StorageType.fromStrForce(lastStorageType) + '/';
-
-		try
-		{
-			if (ClientPrefs.storageType != "EXTERNAL")
-				Sys.command('rm', ['-rf', lastStoragePath]);
-		}
-		catch (e:haxe.Exception)
-			trace('Failed to remove last directory. (${e.message})');
-	}
-	#end
 	
 	override function destroy()
 	{
@@ -1724,14 +1704,6 @@ class OptionsSubstate extends MusicBeatSubstate
 
 		super.destroy();
 		
-		#if android
-		if (ClientPrefs.storageType != lastStorageType)
-		{
-			onStorageChange();
-			CoolUtil.showPopUp('Storage Type has been changed and you needed restart the game!!\nPress OK to close the game.', 'Notice!');
-			lime.system.System.exit(0);
-		}
-		#end
 	}
 }
 
