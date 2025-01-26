@@ -41,7 +41,6 @@ class Paths
 		'content/global/music/freakyIntro.$SOUND_EXT',
 		'content/global/music/freakyMenu.$SOUND_EXT',
 		'content/global/music/breakfast.$SOUND_EXT',
-		"assets/images/Garlic-Bread-PNG-Images.png",
 		'assets/images/mobile/touchpad/bg.png'
 	];
 
