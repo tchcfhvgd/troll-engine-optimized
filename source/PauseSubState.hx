@@ -78,10 +78,6 @@ class PauseSubState extends MusicBeatSubstate
 					var cam:FlxCamera = FlxG.cameras.list[FlxG.cameras.list.length - 1];
 
 					cameras = [cam];
-					
-					removeTouchPad();
-		addTouchPad(PlayState.chartingMode ? "LEFT_FULL" : "UP_DOWN", "A");
-		addTouchPadCamera();
 				};
 				openSubState(daSubstate);
 	                        removeTouchPad();
@@ -325,10 +321,10 @@ class PauseSubState extends MusicBeatSubstate
 		if(subState == null){
 			var scrollChange:Int = -FlxG.mouse.wheel;
 
-			if (controls.UI_UP_P)
+			if (controls.UI_UP_P || touchPad.buttonUp.justPressed)
 				scrollChange--;
 
-			if (controls.UI_DOWN_P)
+			if (controls.UI_DOWN_P || touchPad.buttonDown.justPressed)
 				scrollChange++;
 
 			if (scrollChange != 0)
@@ -340,20 +336,20 @@ class PauseSubState extends MusicBeatSubstate
 				case 'Skip Time':
 					var speed = FlxG.keys.pressed.SHIFT ? 10 : 1;
 
-					if (controls.UI_LEFT_P)
+					if (controls.UI_LEFT_P || touchPad.buttonLeft.justPressed)
 					{
 						FlxG.sound.play(Paths.sound('scrollMenu'), 0.4 );
 						curTime -= 1000 * speed;
 						holdTime = 0;
 					}
-					if (controls.UI_RIGHT_P)
+					if (controls.UI_RIGHT_P || touchPad.buttonRight.justPressed)
 					{
 						FlxG.sound.play(Paths.sound('scrollMenu'), 0.4 );
 						curTime += 1000 * speed;
 						holdTime = 0;
 					}
 
-					if(controls.UI_LEFT || controls.UI_RIGHT)
+					if(controls.UI_LEFT || touchPad.buttonLeft.pressed || controls.UI_RIGHT || touchPad.buttonRight.pressed)
 					{
 						holdTime += elapsed;
 
@@ -369,7 +365,7 @@ class PauseSubState extends MusicBeatSubstate
 					}
 			}
 
-			if (controls.ACCEPT && menuItemFunctions.exists(daSelected))
+			if (controls.ACCEPT || touchPad.buttonA.justPressed && menuItemFunctions.exists(daSelected))
 			{
 				menuItemFunctions.get(daSelected)();
 			}
@@ -493,4 +489,10 @@ class PauseSubState extends MusicBeatSubstate
 		skipTimeText.text = FlxStringUtil.formatTime(Math.max(0, Math.floor(curTime / 1000)), false) + ' / ' + FlxStringUtil.formatTime(Math.max(0, Math.floor(PlayState.instance.songLength / 1000)), false);
 	}
 
+        override function closeSubState() {
+		super.closeSubState();
+		removeTouchPad();
+		addTouchPad(PlayState.chartingMode ? "LEFT_FULL" : "UP_DOWN", "A");
+		addTouchPadCamera();
+	}
 }
