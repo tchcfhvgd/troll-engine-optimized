@@ -45,9 +45,7 @@
 
 	<classpath path="source" />
 	
-	<assets path="assets" />
-	<assets path="assets/images" library="png" />
-	<library name="png"         preload="true" />
+	<assets path="assets"/>
 
 	<assets path='default_content'	rename='content'	embed='false' />
 	<assets path="flixel" embed="true"/> <!-- To override some Flixel assets -->
