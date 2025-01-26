@@ -823,9 +823,6 @@ class ClientPrefs
 		if (Main.fpsVar != null)
 			Main.fpsVar.visible = ClientPrefs.showFPS;
 
-		if (Main.bread != null)
-			Main.bread.visible = ClientPrefs.bread;
-
 		FlxSprite.defaultAntialiasing = ClientPrefs.globalAntialiasing;
 		FlxG.stage.quality = ClientPrefs.globalAntialiasing ? openfl.display.StageQuality.BEST : openfl.display.StageQuality.LOW; // does nothing!!!!
 
