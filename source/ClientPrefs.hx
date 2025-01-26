@@ -61,7 +61,7 @@ class ClientPrefs
 				display: "Mobile Controls Opacity",
 				desc: "Selects the opacity for the mobile buttons (careful not to put it at 0 and lose track of your buttons).",
 				type: Number,
-				value: 60,
+				value: 0.6,
 				data: [
 					"suffix" => "%",
 					"min" => 0,
