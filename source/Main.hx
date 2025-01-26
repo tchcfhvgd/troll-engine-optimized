@@ -160,6 +160,7 @@ class Main extends Sprite
 			switch(arg){
 				case "troll":
 					troll = true;
+					break;
 
 				case "songselect":
 					StartupState.nextState = SongSelectState;
@@ -221,10 +222,6 @@ class Main extends Sprite
 		        #else
 		        FlxG.game.addChild(fpsVar);
 		        #end
-
-			bread = new Bread();
-			bread.visible = false;
-			addChild(bread);
 		}
 	#if sys
 		// Original code was made by sqirra-rng, big props to them!!!
