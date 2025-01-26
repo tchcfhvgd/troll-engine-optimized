@@ -937,17 +937,23 @@ class Controls extends FlxActionSet
 		final substate:MusicBeatSubstate = MusicBeatSubstate.instance;
 		var bools:Array<Bool> = [false, false, false, false];
 
+		if (state != null)
+		{
 			if (state.touchPad != null)
 				bools[0] = state.touchPad.buttonJustPressed(id);
 
 			if (state.mobileControls != null)
 				bools[1] = state.mobileControls.instance.buttonJustPressed(id);
+		}
 
+		if (substate != null)
+		{
 			if (substate.touchPad != null)
 				bools[2] = substate.touchPad.buttonJustPressed(id);
 
 			if (substate.mobileControls != null)
 				bools[3] = substate.mobileControls.instance.buttonJustPressed(id);
+		}	
 
 		return bools.contains(true);
 	}
@@ -958,17 +964,23 @@ class Controls extends FlxActionSet
 		final substate:MusicBeatSubstate = MusicBeatSubstate.instance;
 		var bools:Array<Bool> = [false, false, false, false];
 
+		if (state != null)
+		{
 			if (state.touchPad != null)
 				bools[0] = state.touchPad.buttonJustReleased(id);
 
 			if (state.mobileControls != null)
 				bools[1] = state.mobileControls.instance.buttonJustReleased(id);
+		}
 
+		if (substate != null)
+		{
 			if (substate.touchPad != null)
 				bools[2] = substate.touchPad.buttonJustReleased(id);
 
 			if (substate.mobileControls != null)
 				bools[3] = substate.mobileControls.instance.buttonJustReleased(id);
+		}	
 
 		return bools.contains(true);
 	}
@@ -979,17 +991,23 @@ class Controls extends FlxActionSet
 		final substate:MusicBeatSubstate = MusicBeatSubstate.instance;
 		var bools:Array<Bool> = [false, false, false, false];
 
+		if (state != null)
+		{
 			if (state.touchPad != null)
 				bools[0] = state.touchPad.buttonPressed(id);
 
 			if (state.mobileControls != null)
 				bools[1] = state.mobileControls.instance.buttonPressed(id);
+		}
 
+		if (substate != null)
+		{
 			if (substate.touchPad != null)
 				bools[2] = substate.touchPad.buttonPressed(id);
 
 			if (substate.mobileControls != null)
 				bools[3] = substate.mobileControls.instance.buttonPressed(id);
+		}	
 
 		return bools.contains(true);
 	}
@@ -1001,17 +1019,23 @@ class Controls extends FlxActionSet
 		final substate:MusicBeatSubstate = MusicBeatSubstate.instance;
 		var bools:Array<Bool> = [false, false, false, false];
 
+		if (state != null)
+		{
 			if (state.touchPad != null)
 				bools[0] = state.touchPad.buttonReleased(id);
 
 			if (state.mobileControls != null)
 				bools[1] = state.mobileControls.instance.buttonReleased(id);
+		}
 
+		if (substate != null)
+		{
 			if (substate.touchPad != null)
 				bools[2] = substate.touchPad.buttonReleased(id);
 
 			if (substate.mobileControls != null)
 				bools[3] = substate.mobileControls.instance.buttonReleased(id);
+		}	
 
 		return bools.contains(true);
 	}
