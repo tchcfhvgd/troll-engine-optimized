@@ -178,6 +178,9 @@ class OptionsSubstate extends MusicBeatSubstate
 			case 'showFPS':
 				if (Main.fpsVar != null)
 					Main.fpsVar.visible = val;
+			case 'bread':
+				if (Main.bread != null)
+					Main.bread.visible = val;
 			case 'globalAntialiasing':
 				FlxSprite.defaultAntialiasing = val;
 				FlxG.stage.quality = val ? openfl.display.StageQuality.BEST : openfl.display.StageQuality.LOW; // does nothing!!!!
@@ -386,7 +389,7 @@ class OptionsSubstate extends MusicBeatSubstate
 		],
 		"video" => [
 			["video", ["shaders", "showFPS"]],
-			["display", ["framerate"]],
+			["display", ["framerate", "bread"]],
 			[
 				"performance",
 				[
@@ -430,7 +433,7 @@ class OptionsSubstate extends MusicBeatSubstate
 			] */
 			"mobile" => [
 			[
-				"mobileoptions",
+				"Mobile Options",
 				[
 					"controlsAlpha",
 					"hitboxPos",
@@ -507,9 +510,11 @@ class OptionsSubstate extends MusicBeatSubstate
 
 	public var transCamera:FlxCamera = new FlxCamera();
 	
+    public static var instance:MusicBeatSubstate;
 	public var optState:Bool = false;
 	public function new(state:Bool=false){
 		optState=state;
+		instance = this;
 		super();
 	}
 
