@@ -430,7 +430,7 @@ class OptionsSubstate extends MusicBeatSubstate
 			] */
 			"mobile" => [
 			[
-				"Mobile Options",
+				"mobileoptions",
 				[
 					"controlsAlpha",
 					"hitboxPos",
@@ -747,7 +747,7 @@ class OptionsSubstate extends MusicBeatSubstate
 
 		checkWindows();
 
-		addTouchPad("LEFT_FULL", "A_B");
+		addTouchPad("LEFT_FULL", "A");
 		addTouchPadCamera();
 		
 		super.create();
@@ -757,7 +757,7 @@ class OptionsSubstate extends MusicBeatSubstate
 	override function closeSubState() {
 		super.closeSubState();
 		removeTouchPad();
-		addTouchPad("LEFT_FULL", "A_B");
+		addTouchPad("LEFT_FULL", "A");
 		addTouchPadCamera();
 	}
 
@@ -1680,7 +1680,7 @@ class OptionsSubstate extends MusicBeatSubstate
 
 		if (subState == null)
 		{
-			if (controls.BACK)
+			if (controls.BACK #if android || FlxG.android.justReleased.BACK #end)
 			{
                 save();
 				FlxG.sound.play(Paths.sound('cancelMenu'));
