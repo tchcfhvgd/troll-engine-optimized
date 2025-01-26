@@ -140,6 +140,10 @@ class PauseSubState extends MusicBeatSubstate
 	override public function close(){
 		FlxG.timeScale = prevTimeScale;
 		
+		removeTouchPad();
+		addTouchPad(PlayState.chartingMode ? "LEFT_FULL" : "UP_DOWN", "A");
+		addTouchPadCamera();
+				
 		super.close();
 	}
 
@@ -489,10 +493,4 @@ class PauseSubState extends MusicBeatSubstate
 		skipTimeText.text = FlxStringUtil.formatTime(Math.max(0, Math.floor(curTime / 1000)), false) + ' / ' + FlxStringUtil.formatTime(Math.max(0, Math.floor(PlayState.instance.songLength / 1000)), false);
 	}
 
-        override function closeSubState() {
-		super.closeSubState();
-		removeTouchPad();
-		addTouchPad(PlayState.chartingMode ? "LEFT_FULL" : "UP_DOWN", "A");
-		addTouchPadCamera();
-	}
 }
