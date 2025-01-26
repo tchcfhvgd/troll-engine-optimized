@@ -448,7 +448,6 @@ class OptionsSubstate extends MusicBeatSubstate
 					"hitboxType",
 					"MobileControlSelectSubState",
 					#if android
-					if (VERSION.SDK_INT > 30)
 					"storageType"
 					#end
 				]
