@@ -1595,23 +1595,23 @@ class OptionsSubstate extends MusicBeatSubstate
 			prevScreenX = FlxG.mouse.screenX;
 			prevScreenY = FlxG.mouse.screenY;
 
-			#if !mobile
 			if (pHov == null || doUpdate || movedMouse || FlxG.mouse.justPressed || forceWidgetUpdate)
 			{
 				for (object => widget in currentWidgets)
 				{
+					#if !mobile
 					if (movedMouse && widget != pHov && overlaps(widget.data.get("optionBox")))
 					{
 						changeWidget(null); // to reset keyboard selection
 						curWidget = widget;
 						// trace(widget.optionData.display);
 					}
+					#end
 
 					updateWidget(object, widget, elapsed);
 				}
 				forceWidgetUpdate = false;
 			}
-			#end
 
 			if (curWidget == null){
 				showOptionDesc(null);
