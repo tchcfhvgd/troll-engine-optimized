@@ -80,7 +80,7 @@ class PauseSubState extends MusicBeatSubstate
 					cameras = [cam];
 				};
 				openSubState(daSubstate);
-	                        removeTouchPad();
+	                        touchPad.active = touchPad.visible = false;
 			},
 			"Resume" => this.close,
 			"Restart Song" => () ->
@@ -139,10 +139,6 @@ class PauseSubState extends MusicBeatSubstate
 	var prevTimeScale:Float;
 	override public function close(){
 		FlxG.timeScale = prevTimeScale;
-		
-		removeTouchPad();
-		addTouchPad(PlayState.chartingMode ? "LEFT_FULL" : "UP_DOWN", "A");
-		addTouchPadCamera();
 				
 		super.close();
 	}
@@ -491,6 +487,11 @@ class PauseSubState extends MusicBeatSubstate
 	function updateSkipTimeText()
 	{
 		skipTimeText.text = FlxStringUtil.formatTime(Math.max(0, Math.floor(curTime / 1000)), false) + ' / ' + FlxStringUtil.formatTime(Math.max(0, Math.floor(PlayState.instance.songLength / 1000)), false);
+	}
+
+        override function closeSubState() {
+		super.closeSubState();
+		touchPad.active = touchPad.visible = true;
 	}
 
 }
