@@ -80,12 +80,18 @@ class CopyState extends MusicBeatState
 
 		add(new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0xffcaff4d));
 
+		loadingImage = new FlxSprite(0, 0, Paths.image('trollface'));
+		loadingImage.setGraphicSize(0, FlxG.height);
+		loadingImage.updateHitbox();
+		loadingImage.screenCenter();
+		add(loadingImage);
+
 		loadingBar = new FlxBar(0, FlxG.height - 26, FlxBarFillDirection.LEFT_TO_RIGHT, FlxG.width, 26);
 		loadingBar.setRange(0, maxLoopTimes);
 		add(loadingBar);
 
 		loadedText = new FlxText(loadingBar.x, loadingBar.y + 4, FlxG.width, '', 16);
-		loadedText.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, CENTER);
+		loadedText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER);
 		add(loadedText);
 
 		var ticks:Int = 15;
