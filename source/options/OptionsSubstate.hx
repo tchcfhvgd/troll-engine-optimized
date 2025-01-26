@@ -14,10 +14,12 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import ClientPrefs;
-
 #if sys
-import sys.FileSystem;
 import sys.io.File;
+#end
+
+#if android
+import android.os.Build;
 #end
 
 typedef Widget =
@@ -61,6 +63,12 @@ class OptionsSubstate extends MusicBeatSubstate
 	static public var requiresRestart = _requiresRestart.copy();
 	static public var recommendsRestart = _recommendsRestart.copy();
 
+	#if android
+	var storageTypes:Array<String> = ["EXTERNAL_DATA", "EXTERNAL_OBB", "EXTERNAL_MEDIA", "EXTERNAL", "EXTERNAL_GLOBAL"];
+	var externalPaths:Array<String> = StorageUtil.checkExternalPaths(true);
+	final lastStorageType:String = ClientPrefs.storageType;
+	#end
+	
 	public static function resetRestartRecomendations()
 	{
 		requiresRestart = _requiresRestart.copy();
@@ -440,6 +448,7 @@ class OptionsSubstate extends MusicBeatSubstate
 					"hitboxType",
 					"MobileControlSelectSubState",
 					#if android
+					if (VERSION.SDK_INT > 30)
 					"storageType"
 					#end
 				]
@@ -481,11 +490,6 @@ class OptionsSubstate extends MusicBeatSubstate
 	var _point:FlxPoint = FlxPoint.get();
 	@:noCompletion
 	var _mousePoint:FlxPoint = FlxPoint.get();
-	
-	#if android
-	var externalPaths:Array<String> = StorageUtil.checkExternalPaths(true);
-	final lastStorageType:String = ClientPrefs.storageType;
-	#end
 
 	function overlaps(object:FlxObject, ?camera:FlxCamera)
 	{
@@ -1511,7 +1515,7 @@ class OptionsSubstate extends MusicBeatSubstate
 
 				switch (curWidget.type){
 					case Toggle:
-						if (controls.ACCEPT || touchPad.buttonA.justPressed){
+						if (FlxG.keys.justPressed.ENTER || touchPad.buttonA.justPressed){
 							var checkbox:Checkbox = curWidget.data.get("checkbox");
 							checkbox.toggled = !checkbox.toggled;
 							changeToggle(optionName, checkbox.toggled);
@@ -1526,7 +1530,7 @@ class OptionsSubstate extends MusicBeatSubstate
 						}
 						
 					case Button:
-						if (controls.ACCEPT || touchPad.buttonA.justPressed){
+						if (FlxG.keys.justPressed.ENTER || touchPad.buttonA.justPressed){
 							onButtonPressed(optionName);
 							doUpdate = true;
 						}
@@ -1535,19 +1539,19 @@ class OptionsSubstate extends MusicBeatSubstate
 						// ;_;	
 						var data = curWidget.data;
 
-						if (controls.UI_LEFT_P || touchPad.buttonLeft.justPressed)	{
+						if (FlxG.keys.justPressed.LEFT || touchPad.buttonLeft.justPressed)	{
 							if (FlxG.keys.pressed.SHIFT)	changeNumber(optionName, data.get("min"), true);
 							else							data.get("leftAdjust").press();
 						}
-						else if (controls.UI_LEFT_R || touchPad.buttonLeft.justReleased) {
+						else if (FlxG.keys.justReleased.LEFT || touchPad.buttonLeft.justReleased) {
 							data.get("leftAdjust").release();
 						}		
 
-						if (controls.UI_RIGHT_P || touchPad.buttonRight.justPressed) {
+						if (FlxG.keys.justPressed.RIGHT || touchPad.buttonRight.justPressed) {
 							if (FlxG.keys.pressed.SHIFT)	changeNumber(optionName, data.get("max"), true);
 							else							data.get("rightAdjust").press();
 						}
-						else if (controls.UI_RIGHT_R || touchPad.buttonRight.justReleased) {
+						else if (FlxG.keys.justReleased.RIGHT || touchPad.buttonRight.justReleased) {
 							data.get("rightAdjust").release();
 						}
 
@@ -1562,14 +1566,14 @@ class OptionsSubstate extends MusicBeatSubstate
 							changeNumber(optionName, defaultValue, true);
 							doUpdate = true;
 						}
-						if (controls.UI_LEFT || touchPad.buttonLeft.pressed || controls.UI_RIGHT || touchPad.buttonRight.pressed || FlxG.mouse.pressed){
+						if (FlxG.keys.pressed.LEFT || touchPad.buttonLeft.pressed || FlxG.keys.pressed.RIGHT || touchPad.buttonRight.pressed || FlxG.mouse.pressed){
 							doUpdate = true;
 						}
 
 					case Dropdown:
 						var change = 0;
-						if (controls.UI_LEFT_P || touchPad.buttonLeft.justPressed) change--;
-						if (controls.UI_RIGHT_P|| touchPad.buttonRight.justPressed) change++;
+						if (FlxG.keys.justPressed.LEFT || touchPad.buttonLeft.justPressed) change--;
+						if (FlxG.keys.justPressed.RIGHT || touchPad.buttonRight.justPressed) change++;
 
 						if (change != 0){
 							var sowy = actualOptions.get(optionName);
@@ -1683,7 +1687,7 @@ class OptionsSubstate extends MusicBeatSubstate
 
 		if (subState == null)
 		{
-			if (controls.BACK || touchPad.buttonB.justPressed)
+			if (FlxG.keys.justPressed.ESCAPE || touchPad.buttonB.justPressed)
 			{
                 save();
 				FlxG.sound.play(Paths.sound('cancelMenu'));
@@ -1693,7 +1697,7 @@ class OptionsSubstate extends MusicBeatSubstate
 			}
 		} 
 	}
-	
+
 	#if android
 	function onStorageChange():Void
 	{
@@ -1710,7 +1714,7 @@ class OptionsSubstate extends MusicBeatSubstate
 			trace('Failed to remove last directory. (${e.message})');
 	}
 	#end
-
+	
 	override function destroy()
 	{
 		_point.put();
