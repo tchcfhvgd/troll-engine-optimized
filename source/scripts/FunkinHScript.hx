@@ -98,6 +98,7 @@ class FunkinHScript extends FunkinScript
 		set("FlxSprite", FlxSprite);
 		set("FlxCamera", FlxCamera);
 		set("FlxSound", FlxSound);
+		set("FlxTrail", flixel.addons.effects.FlxTrail);
 		set("FlxMath", flixel.math.FlxMath);
 		set("FlxTimer", flixel.util.FlxTimer);
 		set("FlxTween", flixel.tweens.FlxTween);
@@ -826,6 +827,27 @@ class HScriptSubstate extends MusicBeatSubstate
 		}
 
 		script.call("onLoad");
+	}
+
+	override function create()
+	{
+		// UPDATE: realised I should be using the "on" prefix just so if a script needs to call an internal function it doesnt cause issues
+		// (Also need to figure out how to give the super to the classes incase that's needed in the on[function] funcs though honestly thats what the post functions are for)
+		// I'd love to modify HScript to add override specifically for troll engine hscript
+		// THSCript...
+
+		if (script == null)
+		{
+			FlxG.switchState(new MainMenuState(false));
+			return;
+		}
+
+		// onCreate is used when the script is created so lol
+		if (script.call("onStateCreate", []) == Globals.Function_Stop) // idk why you'd return stop on create on a hscriptstate but.. sure
+			return;
+
+		super.create();
+		script.call("onStateCreatePost");
 	}
 
 	override function update(e)
