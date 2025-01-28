@@ -56,7 +56,7 @@
 	<define name="VIDEOS_ALLOWED" if="desktop || mobile"/>
 	<define name="HSCRIPT_ALLOWED" />
 	<define name="MODS_ALLOWED" if="desktop || mobile" />
-	<define name="CRASH_HANDLER" if="desktop release || desktop final" />
+	<define name="CRASH_HANDLER" if="desktop release || desktop final || mobile" />
 	<define name="MULTICORE_LOADING" if="sys windows" />
     <!-- <define name="tgt" if="display"/> --> <!--Uncomment if you want auto complete to assume youre compiling for TGT-->
 
