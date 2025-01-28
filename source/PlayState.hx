@@ -3657,14 +3657,14 @@ class PlayState extends MusicBeatState
 	}
 	var comboColor = 0xFFFFFFFF;
 
-	private function displayCombo(?combo:Int){
+	private function displayCombo(image:String,?combo:Int){
 		if (combo==null) combo = stats.combo;
 
         var r:Bool = false;
-        if(hudSkinScript!=null && callScript(hudSkinScript, "onDisplayCombo", [combo]) == Globals.Function_Stop)
+        if(hudSkinScript!=null && callScript(hudSkinScript, "onDisplayCombo", [image,combo]) == Globals.Function_Stop)
             r = true;
 
-        if(callOnScripts("onDisplayCombo", [combo]) == Globals.Function_Stop)
+        if(callOnScripts("onDisplayCombo", [image,combo]) == Globals.Function_Stop)
             return;
 
         if(r)return;
@@ -3712,7 +3712,7 @@ class PlayState extends MusicBeatState
 		for (daLoop => i in separatedScore)
 		{
 			var numScore:RatingSprite = ratingGroup.recycle(RatingSprite);
-			numScore.loadGraphic(Paths.image('num' + i));
+			numScore.loadGraphic(Paths.image(image + i));
 			numScore.scale.set(0.5, 0.5);
 
 			if (ClientPrefs.simpleJudge){
@@ -3762,8 +3762,8 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-        if(hudSkinScript!=null)callScript(hudSkinScript, "onDisplayComboPost", [combo]);
-        callOnScripts("onDisplayComboPost", [combo]);
+        if(hudSkinScript!=null)callScript(hudSkinScript, "onDisplayComboPost", [image,combo]);
+        callOnScripts("onDisplayComboPost", [image,combo]);
 	}
 
 	private function applyJudgmentData(judgeData:JudgmentData, diff:Float, ?bot:Bool = false, ?show:Bool = true){
@@ -3825,7 +3825,7 @@ class PlayState extends MusicBeatState
 			if(judgeData.hideJudge!=true)
 				displayJudgment(judgeData.internalName);
 			if(judgeData.comboBehaviour != IGNORE)
-				displayCombo(judgeData.comboBehaviour == BREAK ? (stats.cbCombo > 1 ? -stats.cbCombo : 0) : stats.combo);
+				displayCombo('num',judgeData.comboBehaviour == BREAK ? (stats.cbCombo > 1 ? -stats.cbCombo : 0) : stats.combo);
 		}
 	}
 
