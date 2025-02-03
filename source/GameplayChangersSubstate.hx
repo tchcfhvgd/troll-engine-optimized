@@ -239,6 +239,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		reloadCheckboxes();
 
 		addTouchPad("UP_DOWN", "A_B");
+		addTouchPadCamera();
 	}
 
 	var nextAccept:Int = 5;
