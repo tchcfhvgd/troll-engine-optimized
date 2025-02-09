@@ -124,6 +124,8 @@ class SongSelectState extends MusicBeatState
 		add(versionTxt);
 
 		super.create();
+
+		addTouchPad("UP_DOWN", "A_B_C");
 	}
 
 	var xSecsHolding = 0.0;
@@ -171,6 +173,7 @@ class SongSelectState extends MusicBeatState
 
 		if (FlxG.keys.pressed.CONTROL)
 		{
+			removeTouchPad();
 			openSubState(new GameplayChangersSubstate());
 		}
 
