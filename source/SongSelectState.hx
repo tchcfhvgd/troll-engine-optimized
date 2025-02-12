@@ -171,9 +171,8 @@ class SongSelectState extends MusicBeatState
 				curSel += (checkNewHold - checkLastHold) * (controls.UI_LEFT_P ? -1 : 1) * verticalLimit;
 		}
 
-		if (FlxG.keys.pressed.CONTROL #if android || touchPad.buttonC.justPressed #end)
+		if (FlxG.keys.pressed.CONTROL || touchPad.buttonC.justPressed)
 		{
-			removeTouchPad();
 			openSubState(new GameplayChangersSubstate());
 		}
 
