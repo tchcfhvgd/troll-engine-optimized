@@ -59,6 +59,8 @@ class FunkinHScript extends FunkinScript
 			var errMsg = 'Error parsing hscript! ' #if hscriptPos + '$name:' + parser.line + ', ' #end + e.message;
 			#if desktop
 			Application.current.window.alert(errMsg, "Error on haxe script!");
+			#elseif android
+			CoolUtil.showPopUp(errMsg, "Error on haxe script!");
 			#end
 			trace(errMsg);
 
