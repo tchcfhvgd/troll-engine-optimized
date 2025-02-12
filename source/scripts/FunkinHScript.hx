@@ -513,15 +513,11 @@ class HScriptState extends MusicBeatState
 			variables.set("controls", PlayerSettings.player1.controls);
 
 			#if mobile
-			variables.set("addTouchPad", function(DPad:String, Action:String){
-				addTouchPad(DPad, Action);
-				});
-				variables.set("addTouchPadCamera", function(defaultDrawTarget:Bool = false){
-				addTouchPadCamera(defaultDrawTarget);
-				});
-				variables.set("removeTouchPad", function(){
-				removeTouchPad();
-				});
+			variables.set("addTouchPad", addTouchPad);
+			variables.set("addTouchPadCamera", addTouchPadCamera);
+			variables.set("removeTouchPad", removeTouchPad);
+			variables.set("touchPad", touchPad);
+			variables.set("touchPadCam", touchPadCam);
 			#end
 
 			if (additionalVars != null)
@@ -797,16 +793,12 @@ class HScriptSubstate extends MusicBeatSubstate
 			variables.set("close", close);
 
 			#if mobile
-			variables.set("addTouchPad", function(DPad:String, Action:String){
-				addTouchPad(DPad, Action);
-				});
-				variables.set("addTouchPadCamera", function(defaultDrawTarget:Bool = false){
-				addTouchPadCamera(defaultDrawTarget);
-				});
-				variables.set("removeTouchPad", function(){
-				removeTouchPad();
-				});
-				#end
+			variables.set("addTouchPad", addTouchPad);
+			variables.set("addTouchPadCamera", addTouchPadCamera);
+			variables.set("removeTouchPad", removeTouchPad);
+			variables.set("touchPad", touchPad);
+			variables.set("touchPadCam", touchPadCam);
+			#end
 
 			if (additionalVars != null)
 			{
