@@ -433,7 +433,7 @@ class ChartingState extends MusicBeatState
 
 		reloadGridLayer();
 		updateHeads();
-
+        addTouchPad("LEFT_FULL", "CHART_EDITOR");
 		super.create();
 	}
 
@@ -1793,7 +1793,73 @@ class ChartingState extends MusicBeatState
 			curDummyY = null;
 		}
 
-		if (FlxG.mouse.justPressed)
+		if (controls.mobileC)
+		{
+			for (touch in FlxG.touches.list)
+			{
+				if (touch.x > gridBG.x
+					&& touch.x < gridBG.x + gridBG.width
+					&& touch.y > gridBG.y
+					&& FlxG.mouse.y < gridBG.y + (GRID_SIZE * getSectionBeats() * 4) * zoomList[curZoom])
+				{
+					dummyArrow.visible = true;
+					dummyArrow.x = Math.floor(touch.x / GRID_SIZE) * GRID_SIZE;
+					if (touchPad.buttonY.pressed || FlxG.keys.pressed.SHIFT)
+						dummyArrow.y = touch.y;
+					else
+					{
+						var gridmult = GRID_SIZE / (quantization / 16);
+						dummyArrow.y = Math.floor(touch.y / gridmult) * gridmult;
+					}
+				}
+				else
+				{
+					dummyArrow.visible = false;
+				}
+
+				if (touch.justPressed)
+				{
+					if (touch.overlaps(curRenderedNotes))
+					{
+						curRenderedNotes.forEachAlive(function(note:Note)
+						{
+							if (touch.overlaps(note))
+							{
+								if (touchPad.buttonF.pressed)
+								{
+									selectNote(note);
+								}
+								else if (FlxG.keys.pressed.ALT)
+								{
+									selectNote(note);
+									curSelectedNote[3] = noteTypeIntMap.get(currentType);
+									updateGrid();
+								}
+								else
+								{
+									// trace('tryin to delete note...');
+									deleteNote(note);
+								}
+							}
+						});
+					}
+					else if (!touchPad.buttonF.pressed)
+					{
+						if (touch.x > gridBG.x
+							&& touch.x < gridBG.x + gridBG.width
+							&& touch.y > gridBG.y
+							&& touch.y < gridBG.y + (GRID_SIZE * getSectionBeats() * 4) * zoomList[curZoom])
+						{
+							FlxG.log.add('added note');
+							addNote();
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			if (FlxG.mouse.justPressed)
 		{
 			if (FlxG.mouse.overlaps(curRenderedNotes))
 			{
@@ -1849,6 +1915,7 @@ class ChartingState extends MusicBeatState
 			startDummyY = null;
 			curDummyY = null;
 		}
+		}
 
 		var blockInput:Bool = false;
 		for (inputText in blockPressWhileTypingOn) {
@@ -1890,7 +1957,7 @@ class ChartingState extends MusicBeatState
 
 		if (!blockInput)
 		{
-			if (FlxG.keys.justPressed.ENTER)
+			if (touchPad.buttonA.justPressed || FlxG.keys.justPressed.ENTER)
 			{
 				autosaveSong();
 				if (_song.events != null && _song.events.length > 1)
@@ -1908,7 +1975,7 @@ class ChartingState extends MusicBeatState
 				return;
 			}
 
-			if (FlxG.keys.justPressed.M)
+			if (touchPad.buttonC.justPressed || FlxG.keys.justPressed.M)
 			{
 				var mustHit = !_song.notes[curSec].mustHitSection;
 				_song.notes[curSec].mustHitSection = mustHit;
@@ -1928,18 +1995,18 @@ class ChartingState extends MusicBeatState
 			}	
 
 			if(curSelectedNote != null && curSelectedNote[1] > -1) {
-				if (FlxG.keys.justPressed.E)
+				if (touchPad.buttonDown2.justPressed || FlxG.keys.justPressed.E)
 				{
 					changeNoteSustain(Conductor.stepCrochet);
 				}
-				if (FlxG.keys.justPressed.Q)
+				if (touchPad.buttonUp2.justPressed || FlxG.keys.justPressed.Q)
 				{
 					changeNoteSustain(-Conductor.stepCrochet);
 				}
 			}
 
 
-			if (FlxG.keys.justPressed.BACKSPACE) {
+			if (touchPad.buttonB.justPressed || FlxG.keys.justPressed.BACKSPACE) {
 				//if(onMasterEditor) {
 					PlayState.chartingMode = false;
 					MusicBeatState.switchState(new editors.MasterEditorMenu());
@@ -1949,17 +2016,17 @@ class ChartingState extends MusicBeatState
 				return;
 			}
 
-			if(FlxG.keys.justPressed.Z && FlxG.keys.pressed.CONTROL) {
+			if(touchPad.buttonZ.justPressed || (FlxG.keys.justPressed.Z && FlxG.keys.pressed.CONTROL)) {
 				undo();
 			}
 
 
 
-			if(FlxG.keys.justPressed.Z && curZoom > 0 && !FlxG.keys.pressed.CONTROL) {
+			if(touchPad.buttonV.justPressed || FlxG.keys.justPressed.Z && curZoom > 0 && !FlxG.keys.pressed.CONTROL) {
 				--curZoom;
 				updateZoom();
 			}
-			if(FlxG.keys.justPressed.X && curZoom < zoomList.length-1) {
+			if(touchPad.buttonD.justPressed || FlxG.keys.justPressed.X && curZoom < zoomList.length-1) {
 				curZoom++;
 				updateZoom();
 			}
@@ -1978,7 +2045,7 @@ class ChartingState extends MusicBeatState
 				}
 			}
 
-			if (FlxG.keys.justPressed.SPACE)
+			if (touchPad.buttonX.justPressed || FlxG.keys.justPressed.SPACE)
 			{
 				if (FlxG.sound.music.playing)
 				{
@@ -2021,7 +2088,7 @@ class ChartingState extends MusicBeatState
 				}
 			}
 
-			if (FlxG.keys.pressed.W || FlxG.keys.pressed.S)
+			if (FlxG.keys.pressed.W || FlxG.keys.pressed.S) || (touchPad.buttonUp.pressed || touchPad.buttonDown.pressed))
 			{
 				FlxG.sound.music.pause();
 
@@ -2112,7 +2179,7 @@ class ChartingState extends MusicBeatState
 			
 
 			var shiftThing:Int = 1;
-			if (FlxG.keys.pressed.SHIFT)
+			if (touchPad.buttonY.pressed || FlxG.keys.pressed.SHIFT)
 				shiftThing = 4;
 
 			for(i in curSec ... curSec + shiftThing + 1){
@@ -2122,9 +2189,9 @@ class ChartingState extends MusicBeatState
 				}
 			}
 
-			if (FlxG.keys.justPressed.D)
+			if (touchPad.buttonRight.justPressed || FlxG.keys.justPressed.D)
 				changeSection(curSec + shiftThing);
-			if (FlxG.keys.justPressed.A) {
+			if (touchPad.buttonLeft.justPressed || FlxG.keys.justPressed.A) {
 				if(curSec <= 0){
 
 					// sectionStartTime() but for
