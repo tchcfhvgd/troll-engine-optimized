@@ -171,7 +171,7 @@ class SongSelectState extends MusicBeatState
 				curSel += (checkNewHold - checkLastHold) * (controls.UI_LEFT_P ? -1 : 1) * verticalLimit;
 		}
 
-		if (FlxG.keys.pressed.CONTROL)
+		if (FlxG.keys.pressed.CONTROL #if android || touchPad.buttonC.justPressed #end)
 		{
 			removeTouchPad();
 			openSubState(new GameplayChangersSubstate());
@@ -242,6 +242,7 @@ class SongChartSelec extends MusicBeatState
 		}
 
 		changeSel();
+		addTouchPad("UP_DOWN", "A_B");
 	}
 
 	override public function update(e){
