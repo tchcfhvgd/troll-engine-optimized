@@ -153,7 +153,7 @@ class MainMenuState extends MusicBeatState
 
 		Paths.clearUnusedMemory();
 
-		addTouchPad("UP_DOWN", "A_B");
+		addTouchPad("UP_DOWN", "A_B_C");
 	}
 
 	#if ACHIEVEMENTS_ALLOWED
@@ -284,13 +284,11 @@ class MainMenuState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('confirmMenu'));
 				onSelected();
 			}
-			#if desktop
-			else if (FlxG.keys.anyJustPressed(debugKeys))
+			else if (FlxG.keys.anyJustPressed(debugKeys) || touchPad.buttonC.justPressed)
 			{
 				selectedSomethin = true;
 				MusicBeatState.switchState(new MasterEditorMenu());
 			}
-			#end
 		}
 
 		super.update(elapsed);
